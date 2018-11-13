@@ -119,7 +119,7 @@ def main(num_of_backsteps=1,dropout=1):
 
             # get the rgb image
             img = cvbridge.compressed_imgmsg_to_cv2(img.message)
-            img = image_preprocessing(img)  # -> each image is of dimensions (1, 48x96=4608)
+            img = image_preprocessing(img)  # -> each image is of dimensions (1, 48x96x3=13824)
 
             # hack to get the timestamp of each image in <float 'secs.nsecs'> format instead of <int 'rospy.rostime.Time'>
             temp_timestamp = ext_images[num].timestamp
@@ -211,7 +211,6 @@ def main(num_of_backsteps=1,dropout=1):
         'img': [ synch_imgs[train_size:, :] ]
     })
 
-
     # save train and test datasets to .h5 files
 
     # ATTENTION 1 !!
@@ -243,6 +242,8 @@ def main(num_of_backsteps=1,dropout=1):
     df_data_train.to_hdf(train_set_name, key='data')
     df_img_train.to_hdf(train_set_name, key='images')
 
+    df_data_train.info()
+    df_img_train.info()
 
     # df_all_test.to_hdf(test_set_name, 'table')
     df_data_test.to_hdf(test_set_name, key='data')
