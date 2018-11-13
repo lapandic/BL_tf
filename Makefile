@@ -29,7 +29,7 @@ preprocess:
 
 learn:
 				. $(VIRTUALENV)/bin/activate; \
-				python src/cnn_training_tensorflow.py;
+				python src/cnn_training_tensorflow.py -bs $(BACKSTEPS);
 				#cd $(AGENT); \
 		        #docker-compose pull && docker-compose up
 		        #TODO: make sure learned agent is saved
