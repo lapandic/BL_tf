@@ -86,7 +86,7 @@ oyaml==0.7
 PAM==0.4.2
 pandas==0.23.4
 pandocfilters==1.4.2
-paramiko==1.16.0
+# paramiko==1.16.0
 pathlib2==2.3.2
 pexpect==4.6.0
 pickleshare==0.7.5
@@ -101,7 +101,7 @@ pyasn1==0.1.9
 pyasn1-modules==0.0.7
 PyContracts==1.8.6
 pycparser==2.19
-pycrypto==2.6.1
+# pycrypto==2.6.1
 pydot==1.0.29
 pygame==1.9.4
 PyGeometry==1.5.6
