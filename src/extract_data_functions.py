@@ -93,7 +93,7 @@ def synchronize_data(df_imgs, df_cmds, bag_ID):
 
 
 
-def backstepping_prep(temp_imgs,num_of_backsteps,dropout):
+def backstepping_prep(temp_imgs,temp_data,num_of_backsteps,dropout):
 
     num_of_images = temp_imgs.shape[0]
     img_width = temp_imgs.shape[1]
@@ -109,4 +109,6 @@ def backstepping_prep(temp_imgs,num_of_backsteps,dropout):
     for i in range(0,length_of_dataset):
         imgs[i] = np.copy(temp_imgs[i:i+idx:dropout].flatten())
 
-    return imgs
+    data = temp_data[:length_of_dataset]
+
+    return imgs,data

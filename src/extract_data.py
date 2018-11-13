@@ -165,7 +165,7 @@ def main(num_of_backsteps=1,dropout=1):
 
         # backstepping data preparation
         if num_of_backsteps > 1:
-            temp_synch_imgs = backstepping_prep(temp_synch_imgs,num_of_backsteps,dropout)
+            temp_synch_imgs,temp_synch_data = backstepping_prep(temp_synch_imgs,temp_synch_data,num_of_backsteps,dropout)
 
         if first_time:
             synch_data = copy(temp_synch_data)
