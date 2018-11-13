@@ -193,9 +193,7 @@ def main(num_of_backsteps=1,dropout=1):
     })
 
     # create train dataframe for images in order to save them in the same .h5 file with the rest train data
-    df_img_train = pd.DataFrame({
-        'img': synch_imgs[:train_size, :]
-    })
+    df_img_train = pd.DataFrame(data=synch_imgs[:train_size,:],index=range(train_size))
 
     # create test dataframe
     df_data_test = pd.DataFrame({
@@ -207,9 +205,10 @@ def main(num_of_backsteps=1,dropout=1):
     })
 
     # create test dataframe for images in order to save them in the same .h5 file with the rest test data
-    df_img_test = pd.DataFrame({
-        'img': synch_imgs[train_size:, :]
-    })
+    df_img_test = pd.DataFrame(data=synch_imgs[train_size:,:],index=range(train_size,synch_data.shape[0]))
+    #pd.DataFrame({
+        #'img': synch_imgs[train_size:,:]
+    #},index=range(train_size,synch_data.shape[0]))
 
     # save train and test datasets to .h5 files
 

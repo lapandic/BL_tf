@@ -22,7 +22,7 @@ def load_data(file_path):
     velocities = np.reshape(velocities, (-1, 1))
 
     # extract images from dataset
-    images = df_img['img'][0]
+    images = df_img.values
 
     print('The dataset is loaded: {} images and {} omega velocities.'.format(images.shape[0], velocities.shape[0]))
 
