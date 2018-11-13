@@ -2,12 +2,13 @@
 
 import time
 import os
+import argparse
 from cnn_training_functions import *
 
 os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"
 os.environ["CUDA_VISIBLE_DEVICES"]="0"
 
-def main():
+def main(num_of_backsteps=1):
 
     # define path for training dataset
     file_path_train = os.path.join(os.getcwd(), 'data', 'train', 'train_set.h5')
@@ -26,9 +27,6 @@ def main():
     # define total epochs (e.g 1000, 5000, 10000)
     epochs = 1000
 
-    # define number of backsteps
-    num_of_backsteps = 2
-
     # read train data
     print('Reading train dataset')
     train_velocities, train_images = load_data(file_path_train)
@@ -46,7 +44,7 @@ def main():
     start_time = time.time()
 
     # train model
-    cnn_train = CNN_training(batch_size, epochs, learning_rate, optimizer,num_of_backsteps)
+    cnn_train = CNN_training(batch_size, epochs, learning_rate, optimizer, num_of_backsteps)
     cnn_train.training(model_name, train_velocities, train_images, test_velocities, test_images)
 
     # calculate total training time in minutes
@@ -55,4 +53,7 @@ def main():
     print('Finished training of {} in {} minutes.'.format(model_name, training_time))
 
 if __name__ == '__main__':
-    main()
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-bs','--num_of_backsteps',default=5, help='Number of backsteps', type=int)
+    args = vars(parser.parse_args())
+    main(args['num_of_backsteps'])
