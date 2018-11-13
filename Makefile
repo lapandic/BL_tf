@@ -5,6 +5,9 @@ USERNAME = megaduck
 DUCKIEBOT = megabot08
 PASSWORD = megacity
 
+BACKSTEPS = 1
+DROPOUT = 1
+
 # Makefile to structure work on the AI-DO baselines.
 #
 # - install: Installs dependencies need to perform reinforcement learning
@@ -21,7 +24,7 @@ download:
 
 preprocess:
 				. $(VIRTUALENV)/bin/activate; \
-				bash -c "source ~/dt/Software/environment.sh; python src/extract_data.py;"; \
+				bash -c "source ~/dt/Software/environment.sh; python src/extract_data.py -bs $(BACKSTEPS) -d $(DROPOUT);"; \
 
 
 learn:

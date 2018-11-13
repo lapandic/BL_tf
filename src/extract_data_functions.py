@@ -98,9 +98,9 @@ def backstepping_prep(temp_imgs,num_of_backsteps,dropout):
     num_of_images = temp_imgs.shape[0]
     img_width = temp_imgs.shape[1]
 
-    assert num_of_images > num_of_backsteps, "Less images than backsteps in dataset"
+    assert num_of_images > num_of_backsteps, "Less images "+ str(num_of_images) + " than backsteps " + str(num_of_backsteps) + " in dataset"
 
-    length_of_dataset = num_of_images-num_of_backsteps-dropout+1
+    length_of_dataset = num_of_images-(num_of_backsteps-1)*dropout
     imgs = np.zeros((length_of_dataset, img_width*num_of_backsteps))
 
     #idx = (num_of_backsteps - 1)*dropout + 1

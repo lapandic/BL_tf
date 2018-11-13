@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import cv2
+import argparse
 import numpy as np
 import pandas as pd
 import os
@@ -39,7 +40,7 @@ def extract_messages(path, requested_topics):
 
     return extracted_messages
 
-def main(num_of_backsteps=1):
+def main(num_of_backsteps=1,dropout=1):
 
     # define the list of topics that you want to extract
     ros_topics = [
@@ -164,7 +165,7 @@ def main(num_of_backsteps=1):
 
         # backstepping data preparation
         if num_of_backsteps > 1:
-            temp_synch_imgs = backstepping_prep(temp_synch_imgs,num_of_backsteps)
+            temp_synch_imgs = backstepping_prep(temp_synch_imgs,num_of_backsteps,dropout)
 
         if first_time:
             synch_data = copy(temp_synch_data)
@@ -251,4 +252,8 @@ def main(num_of_backsteps=1):
           "directory.".format(synch_data.shape[0], df_data_train.shape[0], df_data_test.shape[0], data_directory))
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-bs','--num_of_backsteps',default=5, help='Number of backsteps', type=int)
+    parser.add_argument('-d','--dropout',default=7, help='Number of images skipped in dataset', type=int)
+    args = vars(parser.parse_args())
+    main(args['num_of_backsteps'],args['dropout'])
