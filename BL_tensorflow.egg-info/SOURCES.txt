@@ -1,0 +1,7 @@
+README.md
+BL_tensorflow.egg-info/PKG-INFO
+BL_tensorflow.egg-info/SOURCES.txt
+BL_tensorflow.egg-info/dependency_links.txt
+BL_tensorflow.egg-info/entry_points.txt
+BL_tensorflow.egg-info/requires.txt
+BL_tensorflow.egg-info/top_level.txt

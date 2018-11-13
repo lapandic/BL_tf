@@ -1,0 +1,8 @@
+__pycache__/
+BL_venv/
+bag_files/
+data_old/
+data/
+src/data/
+src/bag_files/
+.idea
