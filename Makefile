@@ -37,7 +37,7 @@ learn:
 build-image:
 				. $(VIRTUALENV)/bin/activate; \
                 python src/freeze_graph.py; \
-                docker build --tag duckietown/il-baseline-tensorflow:$(AG_VERSION) .;
+                # docker build --tag duckietown/il-baseline-tensorflow:$(AG_VERSION) .;
 
 evaluate-sim-local:
 				AGENT_VERSION=$(AG_VERSION); \

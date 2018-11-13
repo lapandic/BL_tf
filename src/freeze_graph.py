@@ -9,7 +9,7 @@ os.environ["CUDA_VISIBLE_DEVICES"]="3"
 def main():
 
     # Define the name of your model
-    model_name = 'batch=100,lr=0.0001,optimizer=GDS,epochs=1000'
+    model_name = 'batch=100,lr=0.0001,optimizer=GDS,epochs=1000,backsteps=5'
 
     # define the path to the graph from training
     input_graph = os.path.join(os.getcwd(), 'tensorflow_logs', model_name, 'graph', 'graph.pb')
@@ -30,7 +30,7 @@ def main():
     # In this case they are "vel_true" and "ConvNet/fc_layer_2/BiasAdd".The CNN's predictions are provided from the
     # "ConvNet/fc_layer_2/BiasAdd" element, whereas the true omega velocities from the "vel_true". Here we have to define
     # the element which provides the CNN's predictions and thus we defined as output_node_names the "ConvNet/fc_layer_2/BiasAdd".
-    output_node_names = "ConvNet/fc_layer_2/BiasAdd"
+    output_node_names = "ConvNet/fc_layer_out/BiasAdd"
 
     # The following settings should remain the same
     input_saver = ""
