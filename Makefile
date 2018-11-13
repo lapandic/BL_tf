@@ -24,7 +24,7 @@ download:
 
 preprocess:
 				. $(VIRTUALENV)/bin/activate; \
-				bash -c "source ~/dt/Software/environment.sh; python src/extract_data.py -bs $(BACKSTEPS) -d $(DROPOUT);"; \
+				bash -c "source ~/duckietown/environment.sh; python src/extract_data.py -bs $(BACKSTEPS) -d $(DROPOUT);"; \
 
 
 learn:
