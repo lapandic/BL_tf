@@ -6,7 +6,7 @@ import argparse
 from cnn_training_functions import *
 
 os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"
-os.environ["CUDA_VISIBLE_DEVICES"]="0"
+os.environ["CUDA_VISIBLE_DEVICES"]="7"
 
 def main(num_of_backsteps=1):
 
