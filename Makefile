@@ -8,6 +8,8 @@ PASSWORD = megacity
 BACKSTEPS = 1
 DROPOUT = 1
 
+DIRECTORY = test
+
 # Makefile to structure work on the AI-DO baselines.
 #
 # - install: Installs dependencies need to perform reinforcement learning
@@ -36,7 +38,7 @@ learn:
 
 build-image:
 				. $(VIRTUALENV)/bin/activate; \
-                python src/freeze_graph.py; \
+                python src/freeze_graph.py -d $(DIRECTORY); \
                 # docker build --tag duckietown/il-baseline-tensorflow:$(AG_VERSION) .;
 
 evaluate-sim-local:

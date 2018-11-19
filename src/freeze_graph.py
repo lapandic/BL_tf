@@ -6,10 +6,10 @@ from tensorflow.python.tools import freeze_graph
 os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"
 os.environ["CUDA_VISIBLE_DEVICES"]="3"
 
-def main():
+def main(model_name):
 
     # Define the name of your model
-    model_name = 'batch=100,lr=0.0001,optimizer=GDS,epochs=1000,backsteps=5'
+    # model_name = 'batch=100,lr=0.0001,optimizer=GDS,epochs=1000,backsteps=5'
 
     # define the path to the graph from training
     input_graph = os.path.join(os.getcwd(), 'tensorflow_logs', model_name, 'graph', 'graph.pb')
@@ -59,4 +59,7 @@ def main():
     print("The frozen graph is saved in {}.".format(output_graph))
 
 if __name__ == '__main__':
-    main()
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-d','--dir_name', help='Folder name')
+    args = vars(parser.parse_args())
+    main(args['dir_name'])
