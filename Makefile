@@ -5,8 +5,8 @@ USERNAME = megaduck
 DUCKIEBOT = megabot08
 PASSWORD = megacity
 
-BACKSTEPS = 1
-DROPOUT = 1
+BACKSTEPS = 5
+DROPOUT = 7
 
 DIRECTORY = test
 
