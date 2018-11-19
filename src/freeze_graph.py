@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import os
+import argparse
 from tensorflow.python.tools import freeze_graph
 
 os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"
