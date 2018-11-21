@@ -46,7 +46,7 @@ def form_model_name(batch_size, lr, optimizer, epochs,num_of_backsteps):
     '''
 
     #return "batch={},lr={},optimizer={},epochs={},backsteps={}".format(batch_size, lr, optimizer, epochs,num_of_backsteps)
-    return "datetime={},backsteps={}".format(datetime.datetime.now().strftime("%y%m%d%H%M"),num_of_backsteps)
+    return "datetime={},backsteps={},lr={},opt={}".format(datetime.datetime.now().strftime("%y%m%d%H%M"),num_of_backsteps,lr,optimizer)
 
 class CNN_training:
 

@@ -22,7 +22,7 @@ def main(num_of_backsteps=1):
     optimizer = "GDS"
 
     # define learning rate (e.g 1E-3, 1E-4, 1E-5):
-    learning_rate = 1E-4
+    learning_rate = 1E-3
 
     # define total epochs (e.g 1000, 5000, 10000)
     epochs = 1000

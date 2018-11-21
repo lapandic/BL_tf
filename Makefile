@@ -61,7 +61,7 @@ build-real-local-laptop:
 				echo "Compile TensorFlow graph to Movidius graph"; \
 				. $(VIRTUALENV)/bin/activate; \
 				mkdir movidius_graph; \
-				mvNCCompile -s 12 tensorflow_logs/batch=100,lr=0.0001,optimizer=GDS,epochs=1000/frozen_graph/frozen_graph.pb -in x -on ConvNet/fc_layer_2/BiasAdd -o movidius_graph/lane_following.graph; \
+				mvNCCompile -s 12 $(DIRECTORY)/frozen_graph.pb -in x -on ConvNet/fc_layer_2/BiasAdd -o movidius_graph/lane_following.graph; \
 				echo "Frozen graph is compiled to Movidius graph and saved in ./movidius_graph/ directory"; \
 
 # for Breandan:
