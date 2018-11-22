@@ -6,7 +6,7 @@ import argparse
 from cnn_training_functions import *
 
 os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"
-os.environ["CUDA_VISIBLE_DEVICES"]="7"
+os.environ["CUDA_VISIBLE_DEVICES"]="0"
 
 def main(num_of_backsteps=1):
 
@@ -25,7 +25,7 @@ def main(num_of_backsteps=1):
     learning_rate = 1E-3
 
     # define total epochs (e.g 1000, 5000, 10000)
-    epochs = 1000
+    epochs = 10
 
     # read train data
     print('Reading train dataset')
@@ -55,5 +55,7 @@ def main(num_of_backsteps=1):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-bs','--num_of_backsteps',default=5, help='Number of backsteps', type=int)
+    parser.add_argument('-gpu', '--gpu', default=0, help='GPU device to use', type=int)
     args = vars(parser.parse_args())
+    os.environ["CUDA_VISIBLE_DEVICES"] = str(args['gpu'])
     main(args['num_of_backsteps'])

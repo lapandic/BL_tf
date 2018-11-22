@@ -252,7 +252,7 @@ class CNN_training:
                 print("Epoch: {:04d} , train_loss = {:.6f} , test_loss = {:.6f}".format(epoch+1, avg_train_loss, avg_test_loss))
 
                 # save weights every 100 epochs
-                if epoch % 100 == 0:
+                if epoch % 9 == 0:
                     saver.save(self.sess, logs_train_path, epoch)
 
         # close summary writer

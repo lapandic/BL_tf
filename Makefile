@@ -10,6 +10,8 @@ DROPOUT = 7
 
 DIRECTORY = test
 
+GPU = 0
+
 # Makefile to structure work on the AI-DO baselines.
 #
 # - install: Installs dependencies need to perform reinforcement learning
@@ -31,7 +33,7 @@ preprocess:
 
 learn:
 				. $(VIRTUALENV)/bin/activate; \
-				python src/cnn_training_tensorflow.py -bs $(BACKSTEPS);
+				python src/cnn_training_tensorflow.py -bs $(BACKSTEPS) -gpu $(GPU);
 				#cd $(AGENT); \
 		        #docker-compose pull && docker-compose up
 		        #TODO: make sure learned agent is saved
