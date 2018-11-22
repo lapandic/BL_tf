@@ -36,7 +36,7 @@ learn:
 		        #docker-compose pull && docker-compose up
 		        #TODO: make sure learned agent is saved
 
-build-image:
+freeze:
 				. $(VIRTUALENV)/bin/activate; \
                 python src/freeze_graph.py -d $(DIRECTORY); \
                 # docker build --tag duckietown/il-baseline-tensorflow:$(AG_VERSION) .;
@@ -46,7 +46,7 @@ evaluate-sim-local:
                                 docker-compose up;
 
 
-build-real-local-laptop:
+movidius-graph:
 
 				. $(VIRTUALENV)/bin/activate; \
 				wget -nc https://ncs-forum-uploads.s3.amazonaws.com/ncsdk/ncsdk-02_05_00_02-full/ncsdk-2.05.00.02.tar.gz; \
