@@ -93,9 +93,12 @@ class CNN_training:
 
             # define the 4-d tensor expected by TensorFlow
             # [-1: arbitrary num of images, img_height, img_width, num_channels]
-            x_img = tf.reshape(x, [-1, 48*self.num_of_backsteps, 96, 3])
+            x_array = []
+            for i in range(0,self.num_of_backsteps):
+                x_array.append(tf.reshape(x[i], [-1, 48, 96, 3]))
+            # x_img = tf.reshape(x, [-1, 48*self.num_of_backsteps, 96, 3])
 
-            x_array = tf.split(x_img, num_or_size_splits=self.num_of_backsteps,axis=1)
+            #x_array = tf.split(x_img, num_or_size_splits=self.num_of_backsteps,axis=1)
 
             hl_conv_1 = []
             max_pool_1 = []
@@ -159,11 +162,23 @@ class CNN_training:
 
             if mode == 'train':
                 # train using the batch and calculate the loss
-                _, c = self.sess.run([self.opt, self.loss], feed_dict={self.x: train_x, self.vel_true: train_y})
+                # dictionary = dict(zip(self.x, train_x))
+                # dictionary.update({self.vel_true: train_y})
+                _, c = self.sess.run([self.opt, self.loss],
+                                     feed_dict={self.x[0]: train_x[:, 0:13824],
+                                                self.x[1]: train_x[:, 13824:13824 * 2],
+                                                self.x[2]: train_x[:, 13824 * 2:13824 * 3],
+                                                self.x[3]: train_x[:, 13824 * 3:13824 * 4],
+                                                self.x[4]: train_x[:, 13824 * 4:13824 * 5], self.vel_true: train_y})
 
             elif mode == 'test':
                 # train using the batch and calculate the loss
-                c = self.sess.run(self.loss, feed_dict={self.x: train_x, self.vel_true: train_y})
+                c = self.sess.run(self.loss,
+                                  feed_dict={self.x[0]: train_x[:, 0:13824],
+                                             self.x[1]: train_x[:, 13824:13824 * 2],
+                                             self.x[2]: train_x[:, 13824 * 2:13824 * 3],
+                                             self.x[3]: train_x[:, 13824 * 3:13824 * 4],
+                                             self.x[4]: train_x[:, 13824 * 4:13824 * 5], self.vel_true: train_y})
 
             pred_loss += c
             i += self.batch_size
@@ -184,7 +199,12 @@ class CNN_training:
         man_loss_summary.value.add(tag='Loss', simple_value=None)
 
         # define placeholder variable for input images (each images is a row vector [1, 4608 = 48x96x1])
-        self.x = tf.placeholder(tf.float16, shape=[None, 48 * 96 * 3*self.num_of_backsteps], name='x')
+        # self.x = tf.placeholder(tf.float16, shape=[None, 48 * 96 * 3*self.num_of_backsteps], name='x')
+        self.x = []
+        for i in range(0,self.num_of_backsteps):
+            self.x.append(tf.placeholder(tf.float16, shape=[None, 48 * 96 * 3], name="x"+str(i)))
+
+
 
         # define placeholder for the true omega velocities
         # [None: tensor may hold arbitrary num of velocities, number of omega predictions for each image]
