@@ -58,6 +58,14 @@ class CNN_training:
         self.optimizer = optimizer
         self.num_of_backsteps = num_of_backsteps
         self.img_row_width = 48*96*3
+        self.A = []
+        self.init_A()
+
+    def init_A(self):
+        for i in range(0,self.num_of_backsteps):
+            a_temp_np = np.zeros((self.img_row_width*self.num_of_backsteps,self.img_row_width),dtype=np.float16)
+            a_temp_np[i*self.img_row_width,(i+1)*self.img_row_width] = np.eye(self.img_row_width,self.img_row_width,dtype=np.float16)
+            self.A.append(tf.Variable(a_temp_np))
 
     def backpropagation(self):
         '''
@@ -96,7 +104,8 @@ class CNN_training:
             # [-1: arbitrary num of images, img_height, img_width, num_channels]
             x_array = []
             for i in range(0,self.num_of_backsteps):
-                x_array.append(tf.reshape(x[:,self.img_row_width*i:self.img_row_width*(i+1)], [-1, 48, 96, 3]))
+                x_array.append(tf.reshape(tf.matmul(x*self.A[i]), [-1, 48, 96, 3]))
+
             # x_img = tf.reshape(x, [-1, 48*self.num_of_backsteps, 96, 3])
 
             #x_array = tf.split(x_img, num_or_size_splits=self.num_of_backsteps,axis=1)
