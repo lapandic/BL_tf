@@ -64,7 +64,7 @@ class CNN_training:
     def init_A(self):
         for i in range(0,self.num_of_backsteps):
             a_temp_np = np.zeros((self.img_row_width*self.num_of_backsteps,self.img_row_width),dtype=np.float16)
-            a_temp_np[i*self.img_row_width,(i+1)*self.img_row_width] = np.eye(self.img_row_width,self.img_row_width,dtype=np.float16)
+            a_temp_np[i*self.img_row_width:(i+1)*self.img_row_width] = np.eye(self.img_row_width,self.img_row_width,dtype=np.float16)
             self.A.append(tf.Variable(a_temp_np))
 
     def backpropagation(self):
