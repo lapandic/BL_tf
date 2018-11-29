@@ -33,7 +33,7 @@ def load_data(file_path):
     return velocities, images
 
 
-def form_model_name(batch_size, lr, optimizer, epochs,num_of_backsteps):
+def form_model_name(batch_size, lr, optimizer, epochs,num_of_backsteps,arch_num,depth):
     '''
     Creates name of model as a string, based on the defined hyperparameters used in training
 
@@ -46,7 +46,7 @@ def form_model_name(batch_size, lr, optimizer, epochs,num_of_backsteps):
     '''
 
     #return "batch={},lr={},optimizer={},epochs={},backsteps={}".format(batch_size, lr, optimizer, epochs,num_of_backsteps)
-    return "datetime={},backsteps={},lr={},opt={}".format(datetime.datetime.now().strftime("%y%m%d%H%M"),num_of_backsteps,lr,optimizer)
+    return "datetime={},arch_num={},history={},depth={},lr={},opt={}".format(datetime.datetime.now().strftime("%y%m%d%H%M"),arch_num,num_of_backsteps,depth,lr,optimizer)
 
 class CNN_training:
 
@@ -58,14 +58,7 @@ class CNN_training:
         self.optimizer = optimizer
         self.num_of_backsteps = num_of_backsteps
         self.img_row_width = 48*96*3
-        self.A = []
-        self.init_A()
 
-    def init_A(self):
-        for i in range(0,self.num_of_backsteps):
-            a_temp_np = np.zeros((self.img_row_width*self.num_of_backsteps,self.img_row_width),dtype=np.float16)
-            a_temp_np[i*self.img_row_width:(i+1)*self.img_row_width] = np.eye(self.img_row_width,self.img_row_width,dtype=np.float16)
-            self.A.append(tf.Variable(a_temp_np))
 
     def backpropagation(self):
         '''
@@ -102,13 +95,9 @@ class CNN_training:
 
             # define the 4-d tensor expected by TensorFlow
             # [-1: arbitrary num of images, img_height, img_width, num_channels]
-            x_array = []
-            for i in range(0,self.num_of_backsteps):
-                x_array.append(tf.reshape(tf.matmul(x*self.A[i]), [-1, 48, 96, 3]))
+            x_img = tf.reshape(x, [-1, 48*self.num_of_backsteps, 96, 3])
 
-            # x_img = tf.reshape(x, [-1, 48*self.num_of_backsteps, 96, 3])
-
-            #x_array = tf.split(x_img, num_or_size_splits=self.num_of_backsteps,axis=1)
+            x_array = tf.split(x_img, num_or_size_splits=self.num_of_backsteps,axis=1)
 
             hl_conv_1 = []
             max_pool_1 = []
@@ -172,8 +161,6 @@ class CNN_training:
 
             if mode == 'train':
                 # train using the batch and calculate the loss
-                # dictionary = dict(zip(self.x, train_x))
-                # dictionary.update({self.vel_true: train_y})
                 _, c = self.sess.run([self.opt, self.loss], feed_dict={self.x: train_x, self.vel_true: train_y})
 
             elif mode == 'test':
@@ -267,3 +254,423 @@ class CNN_training:
         # close summary writer
         train_writer.close()
         test_writer.close()
+
+
+    def model1_h1_d1_n1(self, x):
+        '''
+        Define model of CNN under the TensorFlow scope "ConvNet".
+        The scope is used for better organization and visualization in TensorBoard
+
+        :return: output layer
+        '''
+
+        with tf.variable_scope('ConvNet', reuse=tf.AUTO_REUSE):
+
+            # define the 4-d tensor expected by TensorFlow
+            # [-1: arbitrary num of images, img_height, img_width, num_channels]
+            x_img = tf.reshape(x, [-1, 48, 96, 3])
+
+            # define 1st convolutional layer
+            hl_conv_1 = tf.layers.conv2d(x_img, kernel_size=5, filters=2, padding="valid",
+                                         activation=tf.nn.relu, name="conv_layer_1")
+
+            max_pool_1 = tf.layers.max_pooling2d(hl_conv_1, pool_size=2, strides=2)
+
+            # flatten tensor to connect it with the fully connected layers
+            conv_flat = tf.layers.flatten(max_pool_1)
+
+            # add 2nd fully connected layers to predict the driving commands
+            fc_1 = tf.layers.dense(inputs=conv_flat, units=1, name="fc_layer_out")
+
+            return fc_1
+
+    def model2_h1_d2_n1(self, x):
+        '''
+        Define model of CNN under the TensorFlow scope "ConvNet".
+        The scope is used for better organization and visualization in TensorBoard
+
+        :return: output layer
+        '''
+
+        with tf.variable_scope('ConvNet', reuse=tf.AUTO_REUSE):
+
+            # define the 4-d tensor expected by TensorFlow
+            # [-1: arbitrary num of images, img_height, img_width, num_channels]
+            x_img = tf.reshape(x, [-1, 48, 96, 3])
+
+            # define 1st convolutional layer
+            hl_conv_1 = tf.layers.conv2d(x_img, kernel_size=5, filters=2, padding="valid",
+                                         activation=tf.nn.relu, name="conv_layer_1")
+
+            max_pool_1 = tf.layers.max_pooling2d(hl_conv_1, pool_size=2, strides=2)
+
+            # define 2nd convolutional layer
+            hl_conv_2 = tf.layers.conv2d(max_pool_1, kernel_size=5, filters=8, padding="valid",
+                                         activation=tf.nn.relu, name="conv_layer_2")
+
+            max_pool_2 = tf.layers.max_pooling2d(hl_conv_2, pool_size=2, strides=2)
+
+            # flatten tensor to connect it with the fully connected layers
+            conv_flat = tf.layers.flatten(max_pool_2)
+
+            # add 2nd fully connected layers to predict the driving commands
+            fc_1 = tf.layers.dense(inputs=conv_flat, units=1, name="fc_layer_out")
+
+            return fc_1
+
+    def model2_h1_d2_n2(self, x):
+        '''
+        Define model of CNN under the TensorFlow scope "ConvNet".
+        The scope is used for better organization and visualization in TensorBoard
+
+        :return: output layer
+        '''
+
+        with tf.variable_scope('ConvNet', reuse=tf.AUTO_REUSE):
+
+            # define the 4-d tensor expected by TensorFlow
+            # [-1: arbitrary num of images, img_height, img_width, num_channels]
+            x_img = tf.reshape(x, [-1, 48, 96, 3])
+
+            # define 1st convolutional layer
+            hl_conv_1 = tf.layers.conv2d(x_img, kernel_size=5, filters=2, padding="valid",
+                                         activation=tf.nn.relu, name="conv_layer_1")
+
+            max_pool_1 = tf.layers.max_pooling2d(hl_conv_1, pool_size=2, strides=2)
+
+            # flatten tensor to connect it with the fully connected layers
+            conv_flat = tf.layers.flatten(max_pool_1)
+
+            fc_n = tf.layers.dense(inputs=conv_flat, units=64, activation=tf.nn.relu, name="fc_layer_1")
+
+
+            # add 2nd fully connected layers to predict the driving commands
+            fc_1 = tf.layers.dense(inputs=fc_n, units=1, name="fc_layer_out")
+
+            return fc_1
+
+    def model2_h2_d1_n3(self, x):
+        '''
+        Define model of CNN under the TensorFlow scope "ConvNet".
+        The scope is used for better organization and visualization in TensorBoard
+
+        :return: output layer
+        '''
+
+        with tf.variable_scope('ConvNet', reuse=tf.AUTO_REUSE):
+
+            # define the 4-d tensor expected by TensorFlow
+            # [-1: arbitrary num of images, img_height, img_width, num_channels]
+            x_img = tf.reshape(x, [-1, 48*self.num_of_backsteps, 96, 3])
+
+            x_array = tf.split(x_img, num_or_size_splits=self.num_of_backsteps,axis=1)
+
+            hl_conv_1 = []
+            max_pool_1 = []
+            conv_flat = []
+
+            for i in range(len(x_array)):
+
+                # define 1st convolutional layer
+                hl_conv_1.append(tf.layers.conv2d(x_array[i], kernel_size=5, filters=2, padding="valid",
+                                             activation=tf.nn.relu, name="conv_layer_1_"+str(i)))
+
+                max_pool_1.append(tf.layers.max_pooling2d(hl_conv_1[i], pool_size=2, strides=2))
+
+                # flatten tensor to connect it with the fully connected layers
+                conv_flat.append(tf.layers.flatten(max_pool_1[i]))
+
+
+            commands_stack = tf.stack(conv_flat)
+
+            fc = tf.layers.dense(inputs=commands_stack, units=1, name="fc_layer_out")
+
+            return fc
+
+    def model3_h1_d3_n1(self, x):
+        '''
+        Define model of CNN under the TensorFlow scope "ConvNet".
+        The scope is used for better organization and visualization in TensorBoard
+
+        :return: output layer
+        '''
+
+        with tf.variable_scope('ConvNet', reuse=tf.AUTO_REUSE):
+
+            # define the 4-d tensor expected by TensorFlow
+            # [-1: arbitrary num of images, img_height, img_width, num_channels]
+            x_img = tf.reshape(x, [-1, 48, 96, 3])
+
+            # define 1st convolutional layer
+            hl_conv_1 = tf.layers.conv2d(x_img, kernel_size=5, filters=2, padding="valid",
+                                         activation=tf.nn.relu, name="conv_layer_1")
+
+            max_pool_1 = tf.layers.max_pooling2d(hl_conv_1, pool_size=2, strides=2)
+
+            # define 2nd convolutional layer
+            hl_conv_2 = tf.layers.conv2d(max_pool_1, kernel_size=5, filters=8, padding="valid",
+                                         activation=tf.nn.relu, name="conv_layer_2")
+
+            max_pool_2 = tf.layers.max_pooling2d(hl_conv_2, pool_size=2, strides=2)
+
+            hl_conv_3 = tf.layers.conv2d(max_pool_2, kernel_size=5, filters=8, padding="valid",
+                                         activation=tf.nn.relu, name="conv_layer_2")
+
+            max_pool_3 = tf.layers.max_pooling2d(hl_conv_3, pool_size=2, strides=2)
+
+            # flatten tensor to connect it with the fully connected layers
+            conv_flat = tf.layers.flatten(max_pool_3)
+
+            # add 2nd fully connected layers to predict the driving commands
+            fc_1 = tf.layers.dense(inputs=conv_flat, units=1, name="fc_layer_out")
+
+            return fc_1
+
+    def model3_h1_d3_n2(self, x):
+        #CURRENT ARCHITECTURE
+        with tf.variable_scope('ConvNet', reuse=tf.AUTO_REUSE):
+            x_img = tf.reshape(x, [-1, 48, 96, 3])
+
+            # f block
+            hl_conv_1 = tf.layers.conv2d(x_img, kernel_size=5, filters=2, padding="valid",
+                                         activation=tf.nn.relu, name="conv_layer_1")
+
+            max_pool_1 = tf.layers.max_pooling2d(hl_conv_1, pool_size=2, strides=2)
+
+            hl_conv_2 = tf.layers.conv2d(max_pool_1, kernel_size=5, filters=8, padding="valid",
+                                         activation=tf.nn.relu, name="conv_layer_2")
+
+            max_pool_2 = tf.layers.max_pooling2d(hl_conv_2, pool_size=2, strides=2)
+
+            conv_flat = tf.layers.flatten(max_pool_2)
+
+            # FC_n
+            fc_n_1 = tf.layers.dense(inputs=conv_flat, units=64, activation=tf.nn.relu, name="fc_n_layer_1")
+
+            # FC_1
+            fc_1 = tf.layers.dense(inputs=fc_n_1, units=1, name="fc_layer_out")
+
+            return fc_1
+
+    def model3_h1_d3_n3(self, x):
+
+        with tf.variable_scope('ConvNet', reuse=tf.AUTO_REUSE):
+            x_img = tf.reshape(x, [-1, 48, 96, 3])
+
+            # f block
+            hl_conv_1 = tf.layers.conv2d(x_img, kernel_size=5, filters=2, padding="valid",
+                                         activation=tf.nn.relu, name="conv_layer_1")
+
+            max_pool_1 = tf.layers.max_pooling2d(hl_conv_1, pool_size=2, strides=2)
+
+            conv_flat = tf.layers.flatten(max_pool_1)
+
+            # FC_n
+            fc_n_1 = tf.layers.dense(inputs=conv_flat, units=64, activation=tf.nn.relu, name="fc_n_layer_1")
+
+            # FC_n
+            fc_n_2 = tf.layers.dense(inputs=fc_n_1, units=64, activation=tf.nn.relu, name="fc_n_layer_2")
+
+            # FC_1
+            fc_1 = tf.layers.dense(inputs=fc_n_2, units=1, name="fc_layer_out")
+
+            return fc_1
+
+    def model3_h3_d1_n4(self, x):
+
+        with tf.variable_scope('ConvNet', reuse=tf.AUTO_REUSE):
+            x_img = tf.reshape(x, [-1, 48 * self.num_of_backsteps, 96, 3])
+
+            x_array = tf.split(x_img, num_or_size_splits=self.num_of_backsteps, axis=1)
+
+            hl_conv_1 = []
+            max_pool_1 = []
+            conv_flat = []
+
+            for i in range(len(x_array)):
+                # f block
+                hl_conv_1.append(tf.layers.conv2d(x_array[i], kernel_size=5, filters=2, padding="valid",
+                                                  activation=tf.nn.relu, name="conv_layer_1_" + str(i)))
+
+                max_pool_1.append(tf.layers.max_pooling2d(hl_conv_1[i], pool_size=2, strides=2))
+
+                conv_flat.append(tf.layers.flatten(max_pool_1[i]))
+
+            commands_stack = tf.stack(conv_flat)
+
+            # FC_1
+            fc = tf.layers.dense(inputs=commands_stack, units=1, name="fc_layer_out")
+
+            return fc
+
+    def model3_h2_d2_n5(self, x):
+
+        with tf.variable_scope('ConvNet', reuse=tf.AUTO_REUSE):
+            x_img = tf.reshape(x, [-1, 48 * self.num_of_backsteps, 96, 3])
+
+            x_array = tf.split(x_img, num_or_size_splits=self.num_of_backsteps, axis=1)
+
+            # f block pipe 1
+            hl_conv_1 = tf.layers.conv2d(x_array[0], kernel_size=5, filters=2, padding="valid",
+                                         activation=tf.nn.relu, name="conv_layer_1_1")
+
+            max_pool_1 = tf.layers.max_pooling2d(hl_conv_1, pool_size=2, strides=2)
+
+            conv_flat_1 = tf.layers.flatten(max_pool_1)
+
+            # FC_n
+            fc_n_1 = tf.layers.dense(inputs=conv_flat_1, units=64, activation=tf.nn.relu, name="fc_n_layer_1")
+
+            # f block pipe2
+            hl_conv_2 = tf.layers.conv2d(x_array[1], kernel_size=5, filters=2, padding="valid",
+                                         activation=tf.nn.relu, name="conv_layer_2_1")
+
+            max_pool_2 = tf.layers.max_pooling2d(hl_conv_2, pool_size=2, strides=2)
+
+            conv_flat_2 = tf.layers.flatten(max_pool_2)
+
+            commands_stack = tf.stack([fc_n_1,conv_flat_2])
+
+            # FC_1
+            fc = tf.layers.dense(inputs=commands_stack, units=1, name="fc_layer_out")
+
+            return fc
+
+    def model3_h2_d2_n6(self, x):
+
+        with tf.variable_scope('ConvNet', reuse=tf.AUTO_REUSE):
+            x_img = tf.reshape(x, [-1, 48 * self.num_of_backsteps, 96, 3])
+
+            x_array = tf.split(x_img, num_or_size_splits=self.num_of_backsteps, axis=1)
+
+            # f block pipe 1
+            hl_conv_1_1 = tf.layers.conv2d(x_array[0], kernel_size=5, filters=2, padding="valid",
+                                         activation=tf.nn.relu, name="conv_layer_1_1")
+
+            max_pool_1_1 = tf.layers.max_pooling2d(hl_conv_1_1, pool_size=2, strides=2)
+
+            # f block pipe 1
+            hl_conv_1_2 = tf.layers.conv2d(max_pool_1_1, kernel_size=5, filters=8, padding="valid",
+                                         activation=tf.nn.relu, name="conv_layer_1_2")
+
+            max_pool_1_2 = tf.layers.max_pooling2d(hl_conv_1_2, pool_size=2, strides=2)
+
+            conv_flat_1 = tf.layers.flatten(max_pool_1_2)
+
+            # f block pipe2
+            hl_conv_2_1 = tf.layers.conv2d(x_array[1], kernel_size=5, filters=2, padding="valid",
+                                         activation=tf.nn.relu, name="conv_layer_2_1")
+
+            max_pool_2_1 = tf.layers.max_pooling2d(hl_conv_2_1, pool_size=2, strides=2)
+
+            conv_flat_2 = tf.layers.flatten(max_pool_2_1)
+
+            commands_stack = tf.stack([conv_flat_1,conv_flat_2])
+
+            # FC_1
+            fc = tf.layers.dense(inputs=commands_stack, units=1, name="fc_layer_out")
+
+            return fc
+
+    def model3_h2_d2_n7(self, x):
+
+        with tf.variable_scope('ConvNet', reuse=tf.AUTO_REUSE):
+            x_img = tf.reshape(x, [-1, 48 * self.num_of_backsteps, 96, 3])
+
+            x_array = tf.split(x_img, num_or_size_splits=self.num_of_backsteps, axis=1)
+
+            # f block pipe 1
+            hl_conv_1_1 = tf.layers.conv2d(x_array[0], kernel_size=5, filters=2, padding="valid",
+                                         activation=tf.nn.relu, name="conv_layer_1_1")
+
+            max_pool_1_1 = tf.layers.max_pooling2d(hl_conv_1_1, pool_size=2, strides=2)
+
+            conv_flat_1 = tf.layers.flatten(max_pool_1_1)
+
+            # f block pipe2
+            hl_conv_2_1 = tf.layers.conv2d(x_array[1], kernel_size=5, filters=2, padding="valid",
+                                         activation=tf.nn.relu, name="conv_layer_2_1")
+
+            max_pool_2_1 = tf.layers.max_pooling2d(hl_conv_2_1, pool_size=2, strides=2)
+
+            # f block pipe 1
+            hl_conv_2_2 = tf.layers.conv2d(max_pool_2_1, kernel_size=5, filters=8, padding="valid",
+                                         activation=tf.nn.relu, name="conv_layer_2_2")
+
+            max_pool_2_2 = tf.layers.max_pooling2d(hl_conv_2_2, pool_size=2, strides=2)
+
+            conv_flat_2 = tf.layers.flatten(max_pool_2_2)
+
+            commands_stack = tf.stack([conv_flat_1,conv_flat_2])
+
+            # FC_1
+            fc = tf.layers.dense(inputs=commands_stack, units=1, name="fc_layer_out")
+
+            return fc
+
+    def model3_h2_d2_n8(self, x):
+
+        with tf.variable_scope('ConvNet', reuse=tf.AUTO_REUSE):
+            x_img = tf.reshape(x, [-1, 48 * self.num_of_backsteps, 96, 3])
+
+            x_array = tf.split(x_img, num_or_size_splits=self.num_of_backsteps, axis=1)
+
+            # f block pipe 1
+            hl_conv_1_1 = tf.layers.conv2d(x_array[0], kernel_size=5, filters=2, padding="valid",
+                                           activation=tf.nn.relu, name="conv_layer_1_1")
+
+            max_pool_1_1 = tf.layers.max_pooling2d(hl_conv_1_1, pool_size=2, strides=2)
+
+            conv_flat_1 = tf.layers.flatten(max_pool_1_1)
+
+            # f block pipe2
+            hl_conv_2_1 = tf.layers.conv2d(x_array[1], kernel_size=5, filters=2, padding="valid",
+                                           activation=tf.nn.relu, name="conv_layer_2_1")
+
+            max_pool_2_1 = tf.layers.max_pooling2d(hl_conv_2_1, pool_size=2, strides=2)
+
+            conv_flat_2 = tf.layers.flatten(max_pool_2_1)
+
+            # FC_n pipe2
+            fc_n_1 = tf.layers.dense(inputs=conv_flat_2, units=64, activation=tf.nn.relu, name="fc_n_layer_1")
+
+            commands_stack = tf.stack([conv_flat_1, fc_n_1])
+
+            # FC_1
+            fc = tf.layers.dense(inputs=commands_stack, units=1, name="fc_layer_out")
+
+            return fc
+
+    def model3_h2_d2_n9(self, x):
+
+        with tf.variable_scope('ConvNet', reuse=tf.AUTO_REUSE):
+            x_img = tf.reshape(x, [-1, 48 * self.num_of_backsteps, 96, 3])
+
+            x_array = tf.split(x_img, num_or_size_splits=self.num_of_backsteps, axis=1)
+
+            # f block pipe 1
+            hl_conv_1_1 = tf.layers.conv2d(x_array[0], kernel_size=5, filters=2, padding="valid",
+                                           activation=tf.nn.relu, name="conv_layer_1_1")
+
+            max_pool_1_1 = tf.layers.max_pooling2d(hl_conv_1_1, pool_size=2, strides=2)
+
+            conv_flat_1 = tf.layers.flatten(max_pool_1_1)
+
+            # f block pipe2
+            hl_conv_2_1 = tf.layers.conv2d(x_array[1], kernel_size=5, filters=2, padding="valid",
+                                           activation=tf.nn.relu, name="conv_layer_2_1")
+
+            max_pool_2_1 = tf.layers.max_pooling2d(hl_conv_2_1, pool_size=2, strides=2)
+
+            conv_flat_2 = tf.layers.flatten(max_pool_2_1)
+
+            commands_stack = tf.stack([conv_flat_1, conv_flat_2])
+
+            # FC_n 
+            fc_n_1 = tf.layers.dense(inputs=commands_stack, units=64, activation=tf.nn.relu, name="fc_n_layer_1")
+
+            # FC_1
+            fc = tf.layers.dense(inputs=fc_n_1, units=1, name="fc_layer_out")
+
+            return fc
+

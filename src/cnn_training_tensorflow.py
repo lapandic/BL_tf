@@ -8,11 +8,11 @@ from cnn_training_functions import *
 os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"
 os.environ["CUDA_VISIBLE_DEVICES"]="0"
 
-def main(num_of_backsteps=1):
+def main(history,arch_num,depth):
 
     # define path for training dataset
-    file_path_train = os.path.join(os.getcwd(), 'data', 'train', 'train_set.h5')
-    file_path_test = os.path.join(os.getcwd(), 'data', 'test', 'test_set.h5')
+    file_path_train = os.path.join(os.getcwd(), 'data-'+str(history), 'train', 'train_set.h5')
+    file_path_test = os.path.join(os.getcwd(), 'data-'+str(history), 'test', 'test_set.h5')
 
     # define batch_size (e.g 50, 100)
     batch_size = 100
@@ -36,7 +36,7 @@ def main(num_of_backsteps=1):
     test_velocities, test_images = load_data(file_path_test)
 
     # construct model name based on the hyper parameters
-    model_name = form_model_name(batch_size, learning_rate, optimizer, epochs,num_of_backsteps)
+    model_name = form_model_name(batch_size, learning_rate, optimizer, epochs,history,arch_num,depth)
 
     print('Starting training for {} model.'.format(model_name))
 
@@ -44,7 +44,7 @@ def main(num_of_backsteps=1):
     start_time = time.time()
 
     # train model
-    cnn_train = CNN_training(batch_size, epochs, learning_rate, optimizer, num_of_backsteps)
+    cnn_train = CNN_training(batch_size, epochs, learning_rate, optimizer, history)
     cnn_train.training(model_name, train_velocities, train_images, test_velocities, test_images)
 
     # calculate total training time in minutes
@@ -54,8 +54,10 @@ def main(num_of_backsteps=1):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('-bs','--num_of_backsteps',default=5, help='Number of backsteps', type=int)
+    parser.add_argument('-h','--history',default=1, help='Number of backsteps', type=int)
+    parser.add_argument('-a', '--arch_num', default=0, help='Unique id number of architecture', type=int)
+    parser.add_argument('-d', '--depth', default=1, help='Depth', type=int)
     parser.add_argument('-gpu', '--gpu', default=0, help='GPU device to use', type=int)
     args = vars(parser.parse_args())
     os.environ["CUDA_VISIBLE_DEVICES"] = str(args['gpu'])
-    main(args['num_of_backsteps'])
+    main(args['arch_num'],args['history'],args['depth'])
