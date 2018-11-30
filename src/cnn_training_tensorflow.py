@@ -22,10 +22,10 @@ def main(arch_num,history,depth):
     optimizer = "GDS"
 
     # define learning rate (e.g 1E-3, 1E-4, 1E-5):
-    learning_rate = 1E-3
+    learning_rate = 1E-4
 
     # define total epochs (e.g 1000, 5000, 10000)
-    epochs = 10
+    epochs = 1000
 
     # read train data
     print('Reading train dataset')
