@@ -497,7 +497,7 @@ class CNN_training:
 
             conv_flat_2 = tf.layers.flatten(max_pool_2)
 
-            commands_stack = tf.stack([fc_n_1,conv_flat_2])
+            commands_stack = tf.stack([fc_n_1,conv_flat_2],axis=1)
 
             # FC_1
             fc = tf.layers.dense(inputs=commands_stack, units=1, name="fc_layer_out")
@@ -533,7 +533,7 @@ class CNN_training:
 
             conv_flat_2 = tf.layers.flatten(max_pool_2_1)
 
-            commands_stack = tf.stack([conv_flat_1,conv_flat_2])
+            commands_stack = tf.stack([conv_flat_1,conv_flat_2],axis=1)
 
             # FC_1
             fc = tf.layers.dense(inputs=commands_stack, units=1, name="fc_layer_out")
@@ -569,7 +569,7 @@ class CNN_training:
 
             conv_flat_2 = tf.layers.flatten(max_pool_2_2)
 
-            commands_stack = tf.stack([conv_flat_1,conv_flat_2])
+            commands_stack = tf.stack([conv_flat_1,conv_flat_2],axis=1)
 
             # FC_1
             fc = tf.layers.dense(inputs=commands_stack, units=1, name="fc_layer_out")
@@ -602,7 +602,7 @@ class CNN_training:
             # FC_n pipe2
             fc_n_1 = tf.layers.dense(inputs=conv_flat_2, units=64, activation=tf.nn.relu, name="fc_n_layer_1")
 
-            commands_stack = tf.stack([conv_flat_1, fc_n_1])
+            commands_stack = tf.stack([conv_flat_1, fc_n_1],axis=1)
 
             # FC_1
             fc = tf.layers.dense(inputs=commands_stack, units=1, name="fc_layer_out")
@@ -632,7 +632,7 @@ class CNN_training:
 
             conv_flat_2 = tf.layers.flatten(max_pool_2_1)
 
-            commands_stack = tf.stack([conv_flat_1, conv_flat_2])
+            commands_stack = tf.stack([conv_flat_1, conv_flat_2],axis=1)
 
             # FC_n
             fc_n_1 = tf.layers.dense(inputs=commands_stack, units=64, activation=tf.nn.relu, name="fc_n_layer_1")
