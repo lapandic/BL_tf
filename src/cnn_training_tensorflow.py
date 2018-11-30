@@ -44,7 +44,7 @@ def main(history,arch_num,depth):
     start_time = time.time()
 
     # train model
-    cnn_train = CNN_training(batch_size, epochs, learning_rate, optimizer, history)
+    cnn_train = CNN_training(batch_size, epochs, learning_rate, optimizer, history,arch_num)
     cnn_train.training(model_name, train_velocities, train_images, test_velocities, test_images)
 
     # calculate total training time in minutes

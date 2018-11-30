@@ -50,15 +50,36 @@ def form_model_name(batch_size, lr, optimizer, epochs,history,arch_num,depth):
 
 class CNN_training:
 
-    def __init__(self, batch, epochs, learning_rate, optimizer,history):
+    def __init__(self, batch, epochs, learning_rate, optimizer,history,arch_num):
 
         self.batch_size = batch
         self.epochs = epochs
         self.learning_rate = learning_rate
         self.optimizer = optimizer
         self.history = history
+        self.arch_num = arch_num
         self.img_row_width = 48*96*3
+        self.models = [self.model1_h1_d1_n1, self.model2_h1_d2_n1, self.model2_h1_d2_n2, self.model2_h2_d1_n3,
+                       self.model3_h1_d3_n1, self.model3_h1_d3_n2,
+                       self.model3_h1_d3_n3, self.model3_h3_d1_n4, self.model3_h2_d2_n5, self.model3_h2_d2_n6,
+                       self.model3_h2_d2_n7, self.model3_h2_d2_n8, self.model3_h2_d2_n9]
 
+        self.models_h1 = [self.model1_h1_d1_n1, self.model2_h1_d2_n1, self.model3_h1_d3_n1, self.model3_h1_d3_n2,
+                       self.model3_h1_d3_n3]
+
+        self.models_h2 = [self.model2_h2_d1_n3, self.model3_h2_d2_n5, self.model3_h2_d2_n6,
+                       self.model3_h2_d2_n7, self.model3_h2_d2_n8, self.model3_h2_d2_n9]
+
+        self.models_h3 = [self.model3_h3_d1_n4]
+
+        if history == 1 and arch_num < 5:
+            self.model = self.models_h1[arch_num]
+        elif history == 2 and arch_num < 6:
+            self.model = self.models_h2[arch_num]
+        elif history == 3:
+            self.model = self.model3_h3_d1_n4
+        else:
+            print("Requested model not implemented!")
 
     def backpropagation(self):
         '''
@@ -82,59 +103,6 @@ class CNN_training:
         # define loss function and encapsulate its scope
         with tf.name_scope("Loss"):
             return tf.reduce_mean( tf.square(self.vel_pred - self.vel_true) )
-
-    def model(self, x):
-        '''
-        Define model of CNN under the TensorFlow scope "ConvNet".
-        The scope is used for better organization and visualization in TensorBoard
-
-        :return: output layer
-        '''
-
-        with tf.variable_scope('ConvNet', reuse=tf.AUTO_REUSE):
-
-            # define the 4-d tensor expected by TensorFlow
-            # [-1: arbitrary num of images, img_height, img_width, num_channels]
-            x_img = tf.reshape(x, [-1, 48*self.history, 96, 3])
-
-            x_array = tf.split(x_img, num_or_size_splits=self.history,axis=1)
-
-            hl_conv_1 = []
-            max_pool_1 = []
-            hl_conv_2 = []
-            max_pool_2 = []
-            conv_flat = []
-            hl_fc_1 = []
-            hl_fc_2 = []
-
-            for i in range(len(x_array)):
-
-                # define 1st convolutional layer
-                hl_conv_1.append(tf.layers.conv2d(x_array[i], kernel_size=5, filters=2, padding="valid",
-                                             activation=tf.nn.relu, name="conv_layer_1_"+str(i)))
-
-                max_pool_1.append(tf.layers.max_pooling2d(hl_conv_1[i], pool_size=2, strides=2))
-
-                # define 2nd convolutional layer
-                hl_conv_2.append(tf.layers.conv2d(max_pool_1[i], kernel_size=5, filters=8, padding="valid",
-                                             activation=tf.nn.relu, name="conv_layer_2_"+str(i)))
-
-                max_pool_2.append(tf.layers.max_pooling2d(hl_conv_2[i], pool_size=2, strides=2))
-
-                # flatten tensor to connect it with the fully connected layers
-                conv_flat.append(tf.layers.flatten(max_pool_2[i]))
-
-                # add 1st fully connected layers to the neural network
-                hl_fc_1.append(tf.layers.dense(inputs=conv_flat[i], units=64, activation=tf.nn.relu, name="fc_layer_1"+str(i)))
-
-                # add 2nd fully connected layers to predict the driving commands
-                hl_fc_2.append(tf.layers.dense(inputs=hl_fc_1[i], units=1, name="fc_layer_2"+str(i)))
-
-            commands_stack = tf.stack(hl_fc_2)
-
-            fc = tf.layers.dense(inputs=commands_stack, units=1, name="fc_layer_out")
-
-            return fc
 
     def epoch_iteration(self, data_size, x_data, y_data, mode):
         '''
