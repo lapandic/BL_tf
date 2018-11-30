@@ -8,7 +8,7 @@ from cnn_training_functions import *
 os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"
 os.environ["CUDA_VISIBLE_DEVICES"]="0"
 
-def main(arch_num,history,depth,lr):
+def main(arch_num,history,depth,lr,epochs_n):
 
     # define path for training dataset
     file_path_train = os.path.join(os.getcwd(), 'data-'+str(history), 'train', 'train_set.h5')
@@ -25,7 +25,7 @@ def main(arch_num,history,depth,lr):
     learning_rate = lr
 
     # define total epochs (e.g 1000, 5000, 10000)
-    epochs = 1000
+    epochs = epochs_n
 
     # read train data
     print('Reading train dataset')
@@ -57,8 +57,9 @@ if __name__ == '__main__':
     parser.add_argument('-bs','--backsteps',default=1, help='Number of steps in past', type=int)
     parser.add_argument('-a', '--arch_num', default=0, help='Unique id number of architecture', type=int)
     parser.add_argument('-d', '--depth', default=1, help='Depth', type=int)
+    parser.add_argument('-e', '--epochs', default=1000, help='Number of epochs', type=int)
     parser.add_argument('-lr', '--learning_rate', default=0.0001, help='Learning rate', type=float)
     parser.add_argument('-gpu', '--gpu', default=0, help='GPU device to use', type=int)
     args = vars(parser.parse_args())
     os.environ["CUDA_VISIBLE_DEVICES"] = str(args['gpu'])
-    main(args['arch_num'],args['backsteps'],args['depth'],args['learning_rate'])
+    main(args['arch_num'],args['backsteps'],args['depth'],args['learning_rate'],args['epochs'])

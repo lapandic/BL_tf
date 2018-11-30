@@ -16,6 +16,8 @@ AN = 0
 
 LR = 0.0001
 
+EPOCHS = 1000
+
 # Makefile to structure work on the AI-DO baselines.
 #
 # - install: Installs dependencies need to perform reinforcement learning
@@ -37,7 +39,7 @@ preprocess:
 
 learn:
 				. $(VIRTUALENV)/bin/activate; \
-				python src/cnn_training_tensorflow.py -bs $(BACKSTEPS) -gpu $(GPU) -a $(AN) -lr $(LR);
+				python src/cnn_training_tensorflow.py -bs $(BACKSTEPS) -gpu $(GPU) -a $(AN) -lr $(LR) -e $(EPOCHS);
 				#cd $(AGENT); \
 		        #docker-compose pull && docker-compose up
 		        #TODO: make sure learned agent is saved
