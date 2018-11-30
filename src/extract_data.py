@@ -253,7 +253,7 @@ def main(history=1,dropout=1):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('-h','--history',default=5, help='Number of steps in past', type=int)
+    parser.add_argument('-bs','--backsteps',default=5, help='Number of steps in past', type=int)
     parser.add_argument('-d','--dropout',default=7, help='Number of images skipped in dataset', type=int)
     args = vars(parser.parse_args())
-    main(args['history'],args['dropout'])
+    main(args['backsteps'],args['dropout'])
