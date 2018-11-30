@@ -40,7 +40,7 @@ def extract_messages(path, requested_topics):
 
     return extracted_messages
 
-def main(num_of_backsteps=1,dropout=1):
+def main(history=1,dropout=1):
 
     # define the list of topics that you want to extract
     ros_topics = [
@@ -54,7 +54,7 @@ def main(num_of_backsteps=1,dropout=1):
     bags_directory = os.path.join(os.getcwd(), "bag_files")
 
     # define data_directory
-    data_directory = 'data'
+    data_directory = 'data-'+str(history)
     if not os.path.exists(data_directory):
         os.makedirs(data_directory)
 
@@ -164,8 +164,8 @@ def main(num_of_backsteps=1,dropout=1):
         # print temp_synch_data.shape, temp_synch_imgs.shape
 
         # backstepping data preparation
-        if num_of_backsteps > 1:
-            temp_synch_imgs,temp_synch_data = backstepping_prep(temp_synch_imgs,temp_synch_data,num_of_backsteps,dropout)
+        if history > 1:
+            temp_synch_imgs,temp_synch_data = backstepping_prep(temp_synch_imgs,temp_synch_data,history,dropout)
 
         if first_time:
             synch_data = copy(temp_synch_data)
@@ -253,7 +253,7 @@ def main(num_of_backsteps=1,dropout=1):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('-bs','--num_of_backsteps',default=5, help='Number of backsteps', type=int)
+    parser.add_argument('-h','--history',default=5, help='Number of steps in past', type=int)
     parser.add_argument('-d','--dropout',default=7, help='Number of images skipped in dataset', type=int)
     args = vars(parser.parse_args())
-    main(args['num_of_backsteps'],args['dropout'])
+    main(args['history'],args['dropout'])

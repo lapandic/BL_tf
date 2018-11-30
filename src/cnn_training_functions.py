@@ -33,7 +33,7 @@ def load_data(file_path):
     return velocities, images
 
 
-def form_model_name(batch_size, lr, optimizer, epochs,num_of_backsteps,arch_num,depth):
+def form_model_name(batch_size, lr, optimizer, epochs,history,arch_num,depth):
     '''
     Creates name of model as a string, based on the defined hyperparameters used in training
 
@@ -41,22 +41,22 @@ def form_model_name(batch_size, lr, optimizer, epochs,num_of_backsteps,arch_num,
     :param lr: learning rate
     :param optimizer: optimizer (e.g. GDS, Adam )
     :param epochs: number of epochs
-    :param num_of_backsteps: number of backsteps
+    :param history: number of HISTORY
     :return: name of model as a string
     '''
 
-    #return "batch={},lr={},optimizer={},epochs={},backsteps={}".format(batch_size, lr, optimizer, epochs,num_of_backsteps)
-    return "datetime={},arch_num={},history={},depth={},lr={},opt={}".format(datetime.datetime.now().strftime("%y%m%d%H%M"),arch_num,num_of_backsteps,depth,lr,optimizer)
+    #return "batch={},lr={},optimizer={},epochs={},HISTORY={}".format(batch_size, lr, optimizer, epochs,history)
+    return "datetime={},arch_num={},history={},depth={},lr={},opt={}".format(datetime.datetime.now().strftime("%y%m%d%H%M"),arch_num,history,depth,lr,optimizer)
 
 class CNN_training:
 
-    def __init__(self, batch, epochs, learning_rate, optimizer,num_of_backsteps):
+    def __init__(self, batch, epochs, learning_rate, optimizer,history):
 
         self.batch_size = batch
         self.epochs = epochs
         self.learning_rate = learning_rate
         self.optimizer = optimizer
-        self.num_of_backsteps = num_of_backsteps
+        self.history = history
         self.img_row_width = 48*96*3
 
 
@@ -95,9 +95,9 @@ class CNN_training:
 
             # define the 4-d tensor expected by TensorFlow
             # [-1: arbitrary num of images, img_height, img_width, num_channels]
-            x_img = tf.reshape(x, [-1, 48*self.num_of_backsteps, 96, 3])
+            x_img = tf.reshape(x, [-1, 48*self.history, 96, 3])
 
-            x_array = tf.split(x_img, num_or_size_splits=self.num_of_backsteps,axis=1)
+            x_array = tf.split(x_img, num_or_size_splits=self.history,axis=1)
 
             hl_conv_1 = []
             max_pool_1 = []
@@ -186,9 +186,9 @@ class CNN_training:
         man_loss_summary.value.add(tag='Loss', simple_value=None)
 
         # define placeholder variable for input images (each images is a row vector [1, 4608 = 48x96x1])
-        self.x = tf.placeholder(tf.float16, shape=[None, 48 * 96 * 3*self.num_of_backsteps], name='x')
+        self.x = tf.placeholder(tf.float16, shape=[None, 48 * 96 * 3*self.history], name='x')
         # self.x = []
-        #for i in range(0,self.num_of_backsteps):
+        #for i in range(0,self.history):
         # self.x.append(tf.placeholder(tf.float16, shape=[None, 48 * 96 * 3], name="x"+str(i)))
 
 
@@ -361,9 +361,9 @@ class CNN_training:
 
             # define the 4-d tensor expected by TensorFlow
             # [-1: arbitrary num of images, img_height, img_width, num_channels]
-            x_img = tf.reshape(x, [-1, 48*self.num_of_backsteps, 96, 3])
+            x_img = tf.reshape(x, [-1, 48*self.history, 96, 3])
 
-            x_array = tf.split(x_img, num_or_size_splits=self.num_of_backsteps,axis=1)
+            x_array = tf.split(x_img, num_or_size_splits=self.history,axis=1)
 
             hl_conv_1 = []
             max_pool_1 = []
@@ -479,9 +479,9 @@ class CNN_training:
     def model3_h3_d1_n4(self, x):
 
         with tf.variable_scope('ConvNet', reuse=tf.AUTO_REUSE):
-            x_img = tf.reshape(x, [-1, 48 * self.num_of_backsteps, 96, 3])
+            x_img = tf.reshape(x, [-1, 48 * self.history, 96, 3])
 
-            x_array = tf.split(x_img, num_or_size_splits=self.num_of_backsteps, axis=1)
+            x_array = tf.split(x_img, num_or_size_splits=self.history, axis=1)
 
             hl_conv_1 = []
             max_pool_1 = []
@@ -506,9 +506,9 @@ class CNN_training:
     def model3_h2_d2_n5(self, x):
 
         with tf.variable_scope('ConvNet', reuse=tf.AUTO_REUSE):
-            x_img = tf.reshape(x, [-1, 48 * self.num_of_backsteps, 96, 3])
+            x_img = tf.reshape(x, [-1, 48 * self.history, 96, 3])
 
-            x_array = tf.split(x_img, num_or_size_splits=self.num_of_backsteps, axis=1)
+            x_array = tf.split(x_img, num_or_size_splits=self.history, axis=1)
 
             # f block pipe 1
             hl_conv_1 = tf.layers.conv2d(x_array[0], kernel_size=5, filters=2, padding="valid",
@@ -539,9 +539,9 @@ class CNN_training:
     def model3_h2_d2_n6(self, x):
 
         with tf.variable_scope('ConvNet', reuse=tf.AUTO_REUSE):
-            x_img = tf.reshape(x, [-1, 48 * self.num_of_backsteps, 96, 3])
+            x_img = tf.reshape(x, [-1, 48 * self.history, 96, 3])
 
-            x_array = tf.split(x_img, num_or_size_splits=self.num_of_backsteps, axis=1)
+            x_array = tf.split(x_img, num_or_size_splits=self.history, axis=1)
 
             # f block pipe 1
             hl_conv_1_1 = tf.layers.conv2d(x_array[0], kernel_size=5, filters=2, padding="valid",
@@ -575,9 +575,9 @@ class CNN_training:
     def model3_h2_d2_n7(self, x):
 
         with tf.variable_scope('ConvNet', reuse=tf.AUTO_REUSE):
-            x_img = tf.reshape(x, [-1, 48 * self.num_of_backsteps, 96, 3])
+            x_img = tf.reshape(x, [-1, 48 * self.history, 96, 3])
 
-            x_array = tf.split(x_img, num_or_size_splits=self.num_of_backsteps, axis=1)
+            x_array = tf.split(x_img, num_or_size_splits=self.history, axis=1)
 
             # f block pipe 1
             hl_conv_1_1 = tf.layers.conv2d(x_array[0], kernel_size=5, filters=2, padding="valid",
@@ -611,9 +611,9 @@ class CNN_training:
     def model3_h2_d2_n8(self, x):
 
         with tf.variable_scope('ConvNet', reuse=tf.AUTO_REUSE):
-            x_img = tf.reshape(x, [-1, 48 * self.num_of_backsteps, 96, 3])
+            x_img = tf.reshape(x, [-1, 48 * self.history, 96, 3])
 
-            x_array = tf.split(x_img, num_or_size_splits=self.num_of_backsteps, axis=1)
+            x_array = tf.split(x_img, num_or_size_splits=self.history, axis=1)
 
             # f block pipe 1
             hl_conv_1_1 = tf.layers.conv2d(x_array[0], kernel_size=5, filters=2, padding="valid",
@@ -644,9 +644,9 @@ class CNN_training:
     def model3_h2_d2_n9(self, x):
 
         with tf.variable_scope('ConvNet', reuse=tf.AUTO_REUSE):
-            x_img = tf.reshape(x, [-1, 48 * self.num_of_backsteps, 96, 3])
+            x_img = tf.reshape(x, [-1, 48 * self.history, 96, 3])
 
-            x_array = tf.split(x_img, num_or_size_splits=self.num_of_backsteps, axis=1)
+            x_array = tf.split(x_img, num_or_size_splits=self.history, axis=1)
 
             # f block pipe 1
             hl_conv_1_1 = tf.layers.conv2d(x_array[0], kernel_size=5, filters=2, padding="valid",
@@ -666,7 +666,7 @@ class CNN_training:
 
             commands_stack = tf.stack([conv_flat_1, conv_flat_2])
 
-            # FC_n 
+            # FC_n
             fc_n_1 = tf.layers.dense(inputs=commands_stack, units=64, activation=tf.nn.relu, name="fc_n_layer_1")
 
             # FC_1

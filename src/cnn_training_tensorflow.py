@@ -54,7 +54,7 @@ def main(history,arch_num,depth):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('-h','--history',default=1, help='Number of backsteps', type=int)
+    parser.add_argument('-h','--history',default=1, help='Number of steps in past', type=int)
     parser.add_argument('-a', '--arch_num', default=0, help='Unique id number of architecture', type=int)
     parser.add_argument('-d', '--depth', default=1, help='Depth', type=int)
     parser.add_argument('-gpu', '--gpu', default=0, help='GPU device to use', type=int)

@@ -5,7 +5,7 @@ USERNAME = megaduck
 DUCKIEBOT = megabot08
 PASSWORD = megacity
 
-BACKSTEPS = 5
+HISTORY = 5
 DROPOUT = 7
 
 DIRECTORY = test
@@ -28,12 +28,12 @@ download:
 
 preprocess:
 				. $(VIRTUALENV)/bin/activate; \
-				bash -c "source ~/duckietown/environment.sh; python src/extract_data.py -bs $(BACKSTEPS) -d $(DROPOUT);"; \
+				bash -c "source ~/duckietown/environment.sh; python src/extract_data.py -h $(HISTORY) -d $(DROPOUT);"; \
 
 
 learn:
 				. $(VIRTUALENV)/bin/activate; \
-				python src/cnn_training_tensorflow.py -bs $(BACKSTEPS) -gpu $(GPU);
+				python src/cnn_training_tensorflow.py -h $(HISTORY) -gpu $(GPU);
 				#cd $(AGENT); \
 		        #docker-compose pull && docker-compose up
 		        #TODO: make sure learned agent is saved
