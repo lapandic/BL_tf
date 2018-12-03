@@ -84,7 +84,7 @@ def main(history=1,dropout=1):
         bag_ID = file.partition(".bag")[0]
 
         # extract the duckiebot name to complete the definition of the nodes
-        duckiebot_name = file.partition("_")[2].partition(".bag")[0]
+        duckiebot_name = "megabot08" #file.partition("_")[2].partition(".bag")[0]
 
         # complete the topics names with the duckiebot name in the beginning
         ros_topics_temp = copy(ros_topics)
