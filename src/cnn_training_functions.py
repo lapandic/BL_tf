@@ -726,7 +726,7 @@ class CNN_training:
                                          kernel_initializer=tf.keras.initializers.he_normal(),
                                          kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-4),name="rb_conv_3_2")
 
-            rb_conv_3_3 = tf.layers.conv2d(rb_out_1, kernel_size=1, filters=128, strides=2, padding="same",
+            rb_conv_3_3 = tf.layers.conv2d(rb_out_2, kernel_size=1, filters=128, strides=2, padding="same",
                                            name="rb_conv_3_3")
 
             rb_out_3 = tf.add(rb_conv_3_2,rb_conv_3_3,name="rb_out_3")
