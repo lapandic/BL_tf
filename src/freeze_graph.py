@@ -24,7 +24,7 @@ def main(model_name):
         os.makedirs(directory)
 
     # define the checkpoint/weights you want to freeze inside the graph
-    input_checkpoint = os.path.join(os.getcwd(), 'tensorflow_logs', model_name, 'train-9')
+    input_checkpoint = os.path.join(os.getcwd(), 'tensorflow_logs', model_name, 'train-900')
 
     # define the name of the prediction output node
     # This name can be easily extracted using Tensorboard. In GRAPHS tab of Tensorboard, check the inputs of Loss scope.

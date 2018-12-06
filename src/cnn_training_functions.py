@@ -78,6 +78,8 @@ class CNN_training:
             self.model = self.models_h2[arch_num]
         elif history == 3:
             self.model = self.model3_h3_d1_n4
+        elif history == 1 and arch_num ==10:
+            self.model = self.model_dronet
         else:
             print("Requested model not implemented!")
 
@@ -164,7 +166,11 @@ class CNN_training:
         # define placeholder for the true omega velocities
         # [None: tensor may hold arbitrary num of velocities, number of omega predictions for each image]
         self.vel_true = tf.placeholder(tf.float16, shape=[None, 1], name="vel_true")
-        self.vel_pred = self.model(self.x)
+        if self.use_batch_normalization:
+            self.vel_pred_train = self.model(self.x,training=True)
+            self.vel_pred_test = self.model(self.x, training=False)
+        else:
+            self.vel_pred = self.model(self.x) #TODO: Add modularity
 
         self.loss = self.loss_function()
         self.opt = self.backpropagation()
@@ -349,7 +355,7 @@ class CNN_training:
                 conv_flat.append(tf.layers.flatten(max_pool_1[i]))
 
 
-            commands_stack = tf.stack(conv_flat)
+            commands_stack = tf.concat(conv_flat,axis=1)
 
             fc = tf.layers.dense(inputs=commands_stack, units=1, name="fc_layer_out")
 
@@ -464,7 +470,7 @@ class CNN_training:
 
                 conv_flat.append(tf.layers.flatten(max_pool_1[i]))
 
-            commands_stack = tf.stack(conv_flat)
+            commands_stack = tf.concat(conv_flat,axis=1)
 
             # FC_1
             fc = tf.layers.dense(inputs=commands_stack, units=1, name="fc_layer_out")
@@ -642,3 +648,109 @@ class CNN_training:
 
             return fc
 
+    def model_dronet(self, x, training):
+
+        with tf.variable_scope('ConvNet', reuse=tf.AUTO_REUSE):
+            x_img = tf.reshape(x, [-1, 48, 96, 3])
+
+            # first f block NOTE: using linear activation instead of ReLU. NOTE: number of filters!
+            hl_conv_1 = tf.layers.conv2d(x_img, kernel_size=5, filters=32, padding="same",
+                                         activation=None, name="conv_layer_1")
+
+            # NOTE: using pool_size=2 instead of pool_size=3, reason input images in DroNet paper are 200x200x1, we use 48x96x3
+            max_pool_1 = tf.layers.max_pooling2d(hl_conv_1, pool_size=2, strides=2)
+
+
+
+            # Res block 1
+            rb_bn_1_1 = tf.layers.batch_normalization(max_pool_1, training=training)
+            rb_relu_1_1 = tf.nn.relu(rb_bn_1_1,name="rb_relu_1_1")
+            rb_conv_1_1 = tf.layers.conv2d(rb_relu_1_1,kernel_size=3, filters=32, strides=2, padding="same",
+                                         kernel_initializer=tf.keras.initializers.he_normal(),
+                                         kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-4),name="rb_conv_1_1")
+
+            rb_bn_1_2 = tf.layers.batch_normalization(rb_conv_1_1, training=training)
+            rb_relu_1_2 = tf.nn.relu(rb_bn_1_2,name="rb_relu_1_2")
+            rb_conv_1_2 = tf.layers.conv2d(rb_relu_1_2,kernel_size=3, filters=32, padding="same",
+                                         kernel_initializer=tf.keras.initializers.he_normal(),
+                                         kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-4),name="rb_conv_1_2")
+
+            rb_conv_1_3 = tf.layers.conv2d(max_pool_1, kernel_size=1, filters=32, strides=2, padding="same",
+                                           name="rb_conv_1_3")
+
+            rb_out_1 = tf.add(rb_conv_1_2,rb_conv_1_3,name="rb_out_1")
+
+            # Res block 2
+            rb_bn_2_1 = tf.layers.batch_normalization(rb_out_1, training=training)
+            rb_relu_2_1 = tf.nn.relu(rb_bn_2_1,name="rb_relu_2_1")
+            rb_conv_2_1 = tf.layers.conv2d(rb_relu_2_1,kernel_size=3, filters=64, strides=2, padding="same",
+                                         kernel_initializer=tf.keras.initializers.he_normal(),
+                                         kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-4),name="rb_conv_2_1")
+
+            rb_bn_2_2 = tf.layers.batch_normalization(rb_conv_2_1, training=training)
+            rb_relu_2_2 = tf.nn.relu(rb_bn_2_2,name="rb_relu_2_2")
+            rb_conv_2_2 = tf.layers.conv2d(rb_relu_2_2,kernel_size=3, filters=64, padding="same",
+                                         kernel_initializer=tf.keras.initializers.he_normal(),
+                                         kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-4),name="rb_conv_2_2")
+
+            rb_conv_2_3 = tf.layers.conv2d(rb_out_1, kernel_size=1, filters=64, strides=2, padding="same",
+                                           name="rb_conv_2_3")
+
+            rb_out_2 = tf.add(rb_conv_2_2,rb_conv_2_3,name="rb_out_2")
+
+            # Res block 3
+            rb_bn_3_1 = tf.layers.batch_normalization(rb_out_2, training=training)
+            rb_relu_3_1 = tf.nn.relu(rb_bn_3_1,name="rb_relu_2_1")
+            rb_conv_3_1 = tf.layers.conv2d(rb_relu_3_1,kernel_size=3, filters=128, strides=2, padding="same",
+                                         kernel_initializer=tf.keras.initializers.he_normal(),
+                                         kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-4),name="rb_conv_3_1")
+
+            rb_bn_3_2 = tf.layers.batch_normalization(rb_conv_3_1, training=training)
+            rb_relu_3_2 = tf.nn.relu(rb_bn_3_2,name="rb_relu_2_2")
+            rb_conv_3_2 = tf.layers.conv2d(rb_relu_3_2,kernel_size=3, filters=128, padding="same",
+                                         kernel_initializer=tf.keras.initializers.he_normal(),
+                                         kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-4),name="rb_conv_3_2")
+
+            rb_conv_3_3 = tf.layers.conv2d(rb_out_1, kernel_size=1, filters=128, strides=2, padding="same",
+                                           name="rb_conv_3_3")
+
+            rb_out_3 = tf.add(rb_conv_3_2,rb_conv_3_3,name="rb_out_3")
+
+            # flatten
+            flat =  tf.layers.flatten(rb_out_3)
+            flat_relu = tf.nn.relu(flat, name="flat_relu_out")
+            flat_dropout = tf.layers.dropout(flat_relu,name="flat_dropout_out")
+
+            # FC_1 - predicting steering angle
+            fc_1_steer = tf.layers.dense(inputs=flat_dropout, units=1, name="fc_layer_out")
+
+            # FC_1 - predicting steering angle
+            # fc_1_collision = tf.layers.dense(inputs=flat_dropout, units=1, name="fc_layer_out")
+            
+            return fc_1_steer
+
+    def model3_h1_d3_n2_padding_same(self, x):
+        #CURRENT ARCHITECTURE
+        with tf.variable_scope('ConvNet', reuse=tf.AUTO_REUSE):
+            x_img = tf.reshape(x, [-1, 48, 96, 3])
+
+            # f block
+            hl_conv_1 = tf.layers.conv2d(x_img, kernel_size=5, filters=2, padding="same",
+                                         activation=tf.nn.relu, name="conv_layer_1")
+
+            max_pool_1 = tf.layers.max_pooling2d(hl_conv_1, pool_size=2, strides=2)
+
+            hl_conv_2 = tf.layers.conv2d(max_pool_1, kernel_size=5, filters=8, padding="same",
+                                         activation=tf.nn.relu, name="conv_layer_2")
+
+            max_pool_2 = tf.layers.max_pooling2d(hl_conv_2, pool_size=2, strides=2)
+
+            conv_flat = tf.layers.flatten(max_pool_2)
+
+            # FC_n
+            fc_n_1 = tf.layers.dense(inputs=conv_flat, units=64, activation=tf.nn.relu, name="fc_n_layer_1")
+
+            # FC_1
+            fc_1 = tf.layers.dense(inputs=fc_n_1, units=1, name="fc_layer_out")
+
+            return fc_1
