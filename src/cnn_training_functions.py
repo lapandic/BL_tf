@@ -98,9 +98,9 @@ class CNN_training:
         # define the optimizer
         with tf.name_scope("Optimizer"):
             if self.optimizer == "Adam":
-                return tf.train.AdamOptimizer(learning_rate=self.learning_rate).minimize(self.loss)
+                return tf.train.AdamOptimizer(learning_rate=self.learning_rate).minimize(self.loss_train)
             elif self.optimizer == "GDS":
-                return tf.train.GradientDescentOptimizer(learning_rate=self.learning_rate).minimize(self.loss)
+                return tf.train.GradientDescentOptimizer(learning_rate=self.learning_rate).minimize(self.loss_train)
 
     def loss_function(self,training=False):
         '''
