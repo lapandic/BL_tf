@@ -96,7 +96,8 @@ class CNN_training:
         '''
 
         # define the optimizer
-        with tf.name_scope("Optimizer"):
+        update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS)
+        with tf.control_dependencies(update_ops):
             if self.optimizer == "Adam":
                 return tf.train.AdamOptimizer(learning_rate=self.learning_rate).minimize(self.loss_train)
             elif self.optimizer == "GDS":
@@ -184,7 +185,7 @@ class CNN_training:
             self.loss_train = self.loss_function(training=True)
             self.loss_test = self.loss_function(training=False)
         else:
-            self.vel_pred = self.model(self.x) #TODO: Add modularity
+            self.vel_pred = self.model(self.x,training=False) #TODO: Add modularity
             self.loss_train = self.loss_function()
             self.loss_test = self.loss_function()
 
