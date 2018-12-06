@@ -33,7 +33,7 @@ def load_data(file_path):
     return velocities, images
 
 
-def form_model_name(batch_size, lr, optimizer, epochs,history,arch_num,depth):
+def form_model_name(batch_size, lr, optimizer, epochs,history,arch_num,depth,batch_normalization):
     '''
     Creates name of model as a string, based on the defined hyperparameters used in training
 
@@ -46,11 +46,11 @@ def form_model_name(batch_size, lr, optimizer, epochs,history,arch_num,depth):
     '''
 
     #return "batch={},lr={},optimizer={},epochs={},HISTORY={}".format(batch_size, lr, optimizer, epochs,history)
-    return "datetime={},arch_num={},history={},depth={},lr={},opt={}".format(datetime.datetime.now().strftime("%y%m%d%H%M"),arch_num,history,depth,lr,optimizer)
+    return "datetime={},arch_num={},history={},depth={},lr={},opt={},bn={}".format(datetime.datetime.now().strftime("%y%m%d%H%M"),arch_num,history,depth,lr,optimizer,batch_normalization)
 
 class CNN_training:
 
-    def __init__(self, batch, epochs, learning_rate, optimizer,history,arch_num):
+    def __init__(self, batch, epochs, learning_rate, optimizer,history,arch_num,use_batch_normalization):
 
         self.batch_size = batch
         self.epochs = epochs
@@ -58,7 +58,13 @@ class CNN_training:
         self.optimizer = optimizer
         self.history = history
         self.arch_num = arch_num
+        self.use_batch_normalization = bool(use_batch_normalization)
         self.img_row_width = 48*96*3
+        self.loss = None
+        self.loss_train = None
+        self.loss_test = None
+
+
         self.models = [self.model1_h1_d1_n1, self.model2_h1_d2_n1, self.model2_h1_d2_n2, self.model2_h2_d1_n3,
                        self.model3_h1_d3_n1, self.model3_h1_d3_n2,
                        self.model3_h1_d3_n3, self.model3_h3_d1_n4, self.model3_h2_d2_n5, self.model3_h2_d2_n6,
@@ -96,7 +102,7 @@ class CNN_training:
             elif self.optimizer == "GDS":
                 return tf.train.GradientDescentOptimizer(learning_rate=self.learning_rate).minimize(self.loss)
 
-    def loss_function(self):
+    def loss_function(self,training=False):
         '''
         Calculates the loss during training using the predicted and true values(in this case velocities)
 
@@ -104,7 +110,13 @@ class CNN_training:
 
         # define loss function and encapsulate its scope
         with tf.name_scope("Loss"):
-            return tf.reduce_mean( tf.square(self.vel_pred - self.vel_true) )
+            if self.use_batch_normalization:
+                if training:
+                    return tf.reduce_mean(tf.square(self.vel_pred_train - self.vel_true))
+                else:
+                    return tf.reduce_mean(tf.square(self.vel_pred_test - self.vel_true))
+            else:
+                return tf.reduce_mean( tf.square(self.vel_pred - self.vel_true) )
 
     def epoch_iteration(self, data_size, x_data, y_data, mode):
         '''
@@ -131,11 +143,11 @@ class CNN_training:
 
             if mode == 'train':
                 # train using the batch and calculate the loss
-                _, c = self.sess.run([self.opt, self.loss], feed_dict={self.x: train_x, self.vel_true: train_y})
+                _, c = self.sess.run([self.opt, self.loss_train], feed_dict={self.x: train_x, self.vel_true: train_y})
 
             elif mode == 'test':
                 # train using the batch and calculate the loss
-                c = self.sess.run(self.loss, feed_dict={self.x: train_x, self.vel_true: train_y})
+                c = self.sess.run(self.loss_test, feed_dict={self.x: train_x, self.vel_true: train_y})
 
             pred_loss += c
             i += self.batch_size
@@ -167,12 +179,15 @@ class CNN_training:
         # [None: tensor may hold arbitrary num of velocities, number of omega predictions for each image]
         self.vel_true = tf.placeholder(tf.float16, shape=[None, 1], name="vel_true")
         if self.use_batch_normalization:
-            self.vel_pred_train = self.model(self.x,training=True)
+            self.vel_pred_train = self.model(self.x, training=True)
             self.vel_pred_test = self.model(self.x, training=False)
+            self.loss_train = self.loss_function(training=True)
+            self.loss_test = self.loss_function(training=False)
         else:
             self.vel_pred = self.model(self.x) #TODO: Add modularity
+            self.loss_train = self.loss_function()
+            self.loss_test = self.loss_function()
 
-        self.loss = self.loss_function()
         self.opt = self.backpropagation()
 
         # initialize variables
@@ -726,7 +741,7 @@ class CNN_training:
 
             # FC_1 - predicting steering angle
             # fc_1_collision = tf.layers.dense(inputs=flat_dropout, units=1, name="fc_layer_out")
-            
+
             return fc_1_steer
 
     def model3_h1_d3_n2_padding_same(self, x):
