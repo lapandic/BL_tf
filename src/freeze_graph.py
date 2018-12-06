@@ -2,10 +2,25 @@
 
 import os
 import argparse
+import tensorflow as tf
 from tensorflow.python.tools import freeze_graph
 
 os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"
 os.environ["CUDA_VISIBLE_DEVICES"]="3"
+
+def load_graph(frozen_graph_filename):
+    # We load the protobuf file from the disk and parse it to retrieve the
+    # unserialized graph_def
+    with tf.gfile.GFile(frozen_graph_filename, "rb") as f:
+        graph_def = tf.GraphDef()
+        graph_def.ParseFromString(f.read())
+
+    # Then, we import the graph_def into a new Graph and returns it
+    with tf.Graph().as_default() as graph:
+        # The name var will prefix every op/nodes in your graph
+        # Since we load everything in a new graph, this is not needed
+        tf.import_graph_def(graph_def, name="")
+        return graph
 
 def main(model_name):
 
@@ -58,6 +73,11 @@ def main(model_name):
     )
 
     print("The frozen graph is saved in {}.".format(output_graph))
+
+    g2 = load_graph(output_graph)
+    with g2.as_default():
+        flops = tf.profiler.profile(g2, options=tf.profiler.ProfileOptionBuilder.float_operation())
+        print('FLOP after freezing', flops.total_float_ops)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
