@@ -86,6 +86,8 @@ class CNN_training:
             self.model = self.model3_h3_d1_n4
         elif history == 1 and arch_num ==10:
             self.model = self.model_dronet
+        elif history == 1 and arch_num ==11:
+            self.model = self.model_dronet2
         else:
             print("Requested model not implemented!")
 
