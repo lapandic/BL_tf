@@ -78,16 +78,16 @@ class CNN_training:
 
         self.models_h3 = [self.model3_h3_d1_n4]
 
+        self.models_dronet = [self.model_dronet, self.model_dronet2, self.model_dronet_1rb]
+
         if history == 1 and arch_num < 5:
             self.model = self.models_h1[arch_num]
         elif history == 2 and arch_num < 6:
             self.model = self.models_h2[arch_num]
         elif history == 3:
             self.model = self.model3_h3_d1_n4
-        elif history == 1 and arch_num ==10:
-            self.model = self.model_dronet
-        elif history == 1 and arch_num ==11:
-            self.model = self.model_dronet2
+        elif history == 1 and arch_num > 9:
+            self.model = self.models_dronet[arch_num-10]
         else:
             print("Requested model not implemented!")
 
@@ -827,6 +827,58 @@ class CNN_training:
             # fc_1_collision = tf.layers.dense(inputs=flat_dropout, units=1, name="fc_layer_out")
 
             return fc_1_steer
+
+    def model_dronet_1rb(self, x, training):
+
+        with tf.variable_scope('ConvNet', reuse=tf.AUTO_REUSE):
+            x_img = tf.reshape(x, [-1, 48, 96, 3])
+
+            # first f block NOTE: using linear activation instead of ReLU. NOTE: number of filters!
+            hl_conv_1 = tf.layers.conv2d(x_img, kernel_size=5, filters=32, padding="same",
+                                         activation=None, name="conv_layer_1")
+
+            # NOTE: using pool_size=2 instead of pool_size=3, reason input images in DroNet paper are 200x200x1, we use 48x96x3
+            max_pool_1 = tf.layers.max_pooling2d(hl_conv_1, pool_size=2, strides=2)
+
+            # Res block 1
+            if training:
+                rb_bn_1_1 = tf.layers.batch_normalization(max_pool_1, training=training)
+            else:
+                rb_bn_1_1 = max_pool_1
+            rb_relu_1_1 = tf.nn.relu(rb_bn_1_1, name="rb_relu_1_1")
+            rb_conv_1_1 = tf.layers.conv2d(rb_relu_1_1, kernel_size=3, filters=32, strides=2, padding="same",
+                                           kernel_initializer=tf.keras.initializers.he_normal(),
+                                           kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-4),
+                                           name="rb_conv_1_1")
+
+            if training:
+                rb_bn_1_2 = tf.layers.batch_normalization(rb_conv_1_1, training=training)
+            else:
+                rb_bn_1_2 = rb_conv_1_1
+            rb_relu_1_2 = tf.nn.relu(rb_bn_1_2, name="rb_relu_1_2")
+            rb_conv_1_2 = tf.layers.conv2d(rb_relu_1_2, kernel_size=3, filters=32, padding="same",
+                                           kernel_initializer=tf.keras.initializers.he_normal(),
+                                           kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-4),
+                                           name="rb_conv_1_2")
+
+            rb_conv_1_3 = tf.layers.conv2d(max_pool_1, kernel_size=1, filters=32, strides=2, padding="same",
+                                           name="rb_conv_1_3")
+
+            rb_out_1 = tf.add(rb_conv_1_2, rb_conv_1_3, name="rb_out_1")
+
+            # flatten
+            flat = tf.layers.flatten(rb_out_1)
+            flat_relu = tf.nn.relu(flat, name="flat_relu_out")
+            flat_dropout = tf.layers.dropout(flat_relu, name="flat_dropout_out")
+
+            # FC_1 - predicting steering angle
+            fc_1_steer = tf.layers.dense(inputs=flat_dropout, units=1, name="fc_layer_out")
+
+            # FC_1 - predicting steering angle
+            # fc_1_collision = tf.layers.dense(inputs=flat_dropout, units=1, name="fc_layer_out")
+
+            return fc_1_steer
+
 
     def model3_h1_d3_n2_padding_same(self, x):
         #CURRENT ARCHITECTURE
