@@ -71,7 +71,7 @@ class CNN_training:
                        self.model3_h2_d2_n7, self.model3_h2_d2_n8, self.model3_h2_d2_n9]
 
         self.models_h1 = [self.model1_h1_d1_n1, self.model2_h1_d2_n1, self.model3_h1_d3_n1, self.model3_h1_d3_n2,
-                       self.model3_h1_d3_n3]
+                       self.model3_h1_d3_n3, self.model7_h1]
 
         self.models_h2 = [self.model2_h2_d1_n3, self.model3_h2_d2_n5, self.model3_h2_d2_n6,
                        self.model3_h2_d2_n7, self.model3_h2_d2_n8, self.model3_h2_d2_n9]
@@ -188,7 +188,7 @@ class CNN_training:
             self.loss_test = self.loss_function(training=False)
         else:
             if self.arch_num > 9:
-                self.vel_pred = self.model(self.x,training=False) 
+                self.vel_pred = self.model(self.x,training=False)
             else:
                 self.vel_pred = self.model(self.x)
             self.loss_train = self.loss_function()
@@ -906,5 +906,63 @@ class CNN_training:
 
             # FC_1
             fc_1 = tf.layers.dense(inputs=fc_n_1, units=1, name="fc_layer_out")
+
+            return fc_1
+
+    def model7_h1(self, x):
+        '''
+        Define model of CNN under the TensorFlow scope "ConvNet".
+        The scope is used for better organization and visualization in TensorBoard
+
+        :return: output layer
+        '''
+
+        with tf.variable_scope('ConvNet', reuse=tf.AUTO_REUSE):
+
+            # define the 4-d tensor expected by TensorFlow
+            # [-1: arbitrary num of images, img_height, img_width, num_channels]
+            x_img = tf.reshape(x, [-1, 48, 96, 3])
+
+            # define 1st convolutional layer
+            hl_conv_1 = tf.layers.conv2d(x_img, kernel_size=5, filters=2, padding="valid",
+                                         activation=tf.nn.relu, name="conv_layer_1")
+
+            max_pool_1 = tf.layers.max_pooling2d(hl_conv_1, pool_size=2, strides=2)
+
+            # define 2nd convolutional layer
+            hl_conv_2 = tf.layers.conv2d(max_pool_1, kernel_size=5, filters=8, padding="valid",
+                                         activation=tf.nn.relu, name="conv_layer_2")
+
+            max_pool_2 = tf.layers.max_pooling2d(hl_conv_2, pool_size=2, strides=2)
+
+            # f 3
+            hl_conv_3 = tf.layers.conv2d(max_pool_2, kernel_size=5, filters=8, padding="valid",
+                                         activation=tf.nn.relu, name="conv_layer_3")
+
+            max_pool_3 = tf.layers.max_pooling2d(hl_conv_3, pool_size=2, strides=2)
+
+            # f 4
+            hl_conv_4 = tf.layers.conv2d(max_pool_3, kernel_size=5, filters=8, padding="valid",
+                                         activation=tf.nn.relu, name="conv_layer_4")
+
+            max_pool_4 = tf.layers.max_pooling2d(hl_conv_4, pool_size=2, strides=2)
+
+            # f 5
+            hl_conv_5 = tf.layers.conv2d(max_pool_4, kernel_size=5, filters=8, padding="valid",
+                                         activation=tf.nn.relu, name="conv_layer_5")
+
+            max_pool_5 = tf.layers.max_pooling2d(hl_conv_5, pool_size=2, strides=2)
+
+            # flatten tensor to connect it with the fully connected layers
+            conv_flat = tf.layers.flatten(max_pool_5)
+
+            # FC_n
+            fc_n_1 = tf.layers.dense(inputs=conv_flat, units=512, activation=tf.nn.relu, name="fc_n_layer_1")
+
+            # FC_n
+            fc_n_2 = tf.layers.dense(inputs=fc_n_1, units=64, activation=tf.nn.relu, name="fc_n_layer_2")
+
+            # add 2nd fully connected layers to predict the driving commands
+            fc_1 = tf.layers.dense(inputs=fc_n_2, units=1, name="fc_layer_out")
 
             return fc_1
