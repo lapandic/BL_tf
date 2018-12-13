@@ -47,7 +47,7 @@ def main(history=1,dropout=1):
                 # the duckiebot name can change from one bag file to the other, so define
                 # the topics WITHOUT the duckiebot name in the beginning
                 "/camera_node/image/compressed",
-                "/lane_controller_node/car_cmd"
+                "/joy_mapper_node/car_cmd"
                 ]
 
     # define the bags_directory in order to extract the data
