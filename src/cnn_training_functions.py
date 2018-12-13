@@ -80,7 +80,7 @@ class CNN_training:
 
         self.models_dronet = [self.model_dronet, self.model_dronet2, self.model_dronet_1rb]
 
-        if history == 1 and arch_num < 5:
+        if history == 1 and arch_num < 6:
             self.model = self.models_h1[arch_num]
         elif history == 2 and arch_num < 6:
             self.model = self.models_h2[arch_num]
