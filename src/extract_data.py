@@ -24,19 +24,24 @@ def extract_messages(path, requested_topics):
 
     _, available_topics = bag.get_type_and_topic_info()
 
-    for i in range(0,len(available_topics)):
-        if available_topics[i].find("lane_controller_node") != -1:
-            available_topics[i].replace("lane_controller_node", "joy_mapper_node")
+    available_topics_temp = {}
+    for topic in available_topics:
+        new_topic = topic
+        if topic.find("lane_controller_node") != -1:
+            new_topic = topic.replace("lane_controller_node", "joy_mapper_node")
+        available_topics_temp[new_topic] = available_topics[topic]
 
     # check if the requested topics exist in bag's topics and if yes extract the messages only for them
     extracted_messages = {}
     for topic in requested_topics:
-        if topic not in available_topics:
-            raise ValueError("Could not find the requested topic (%s) in the bag %s" % (topic, path))
-        extracted_messages[topic] = MessageCollection(topic=topic, type=available_topics[topic].msg_type, messages=[])
+        #if topic not in available_topics:
+        #    raise ValueError("Could not find the requested topic (%s) in the bag %s" % (topic, path))
+        extracted_messages[topic] = MessageCollection(topic=topic, type=available_topics_temp[topic].msg_type, messages=[])
 
     for msg in bag.read_messages():
         topic = msg.topic
+        if topic.find("lane_controller_node") != -1:
+            topic = topic.replace("lane_controller_node", "joy_mapper_node")
         if topic not in requested_topics:
             continue
         extracted_messages[topic].messages.append(msg)
