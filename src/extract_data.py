@@ -24,9 +24,9 @@ def extract_messages(path, requested_topics):
 
     _, available_topics = bag.get_type_and_topic_info()
 
-    for topic in available_topics:
-        if topic.find("lane_controller_node") != -1:
-            topic.replace("lane_controller_node", "joy_mapper_node")
+    for i in range(0,len(available_topics)):
+        if available_topics[i].find("lane_controller_node") != -1:
+            available_topics[i].replace("lane_controller_node", "joy_mapper_node")
 
     # check if the requested topics exist in bag's topics and if yes extract the messages only for them
     extracted_messages = {}
