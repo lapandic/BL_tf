@@ -936,19 +936,19 @@ class CNN_training:
             max_pool_2 = tf.layers.max_pooling2d(hl_conv_2, pool_size=2, strides=2)
 
             # f 3
-            hl_conv_3 = tf.layers.conv2d(max_pool_2, kernel_size=5, filters=8, padding="valid",
+            hl_conv_3 = tf.layers.conv2d(max_pool_2, kernel_size=3, filters=8, padding="valid",
                                          activation=tf.nn.relu, name="conv_layer_3")
 
             max_pool_3 = tf.layers.max_pooling2d(hl_conv_3, pool_size=2, strides=2)
 
             # f 4
-            hl_conv_4 = tf.layers.conv2d(max_pool_3, kernel_size=5, filters=8, padding="valid",
+            hl_conv_4 = tf.layers.conv2d(max_pool_3, kernel_size=3, filters=8, padding="valid",
                                          activation=tf.nn.relu, name="conv_layer_4")
 
             max_pool_4 = tf.layers.max_pooling2d(hl_conv_4, pool_size=2, strides=2)
 
             # f 5
-            hl_conv_5 = tf.layers.conv2d(max_pool_4, kernel_size=5, filters=8, padding="valid",
+            hl_conv_5 = tf.layers.conv2d(max_pool_4, kernel_size=3, filters=8, padding="valid",
                                          activation=tf.nn.relu, name="conv_layer_5")
 
             max_pool_5 = tf.layers.max_pooling2d(hl_conv_5, pool_size=2, strides=2)
