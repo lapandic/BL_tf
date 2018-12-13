@@ -91,9 +91,6 @@ class CNN_training:
         else:
             print("Requested model not implemented!")
 
-        model_vars = tf.trainable_variables()
-        tf.contrib.slim.model_analyzer.analyze_vars(model_vars, print_info=True)
-
     def backpropagation(self):
         '''
         Executes backpropagation during training based on the defined optimizer,learning rate and loss function
@@ -224,6 +221,9 @@ class CNN_training:
             # saved information.
             tf.train.write_graph(tf_graph.as_graph_def(), graph_path, 'graph.pbtxt', as_text= True)
             tf.train.write_graph(tf_graph.as_graph_def(), graph_path, 'graph.pb', as_text= False)
+
+            model_vars = tf.trainable_variables()
+            tf.contrib.slim.model_analyzer.analyze_vars(model_vars, print_info=True)
 
             for epoch in range(self.epochs):
 
