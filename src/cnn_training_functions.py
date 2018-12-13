@@ -933,22 +933,22 @@ class CNN_training:
             hl_conv_2 = tf.layers.conv2d(max_pool_1, kernel_size=5, filters=8, padding="valid",
                                          activation=tf.nn.relu, name="conv_layer_2")
 
-            max_pool_2 = tf.layers.max_pooling2d(hl_conv_2, pool_size=2, strides=2)
+            #max_pool_2 = tf.layers.max_pooling2d(hl_conv_2, pool_size=2, strides=2)
 
             # f 3
-            hl_conv_3 = tf.layers.conv2d(max_pool_2, kernel_size=3, filters=8, padding="valid",
+            hl_conv_3 = tf.layers.conv2d(hl_conv_2, kernel_size=3, filters=8, padding="valid",
                                          activation=tf.nn.relu, name="conv_layer_3")
 
-            max_pool_3 = tf.layers.max_pooling2d(hl_conv_3, pool_size=2, strides=2)
+            #max_pool_3 = tf.layers.max_pooling2d(hl_conv_3, pool_size=2, strides=2)
 
             # f 4
-            hl_conv_4 = tf.layers.conv2d(max_pool_3, kernel_size=3, filters=8, padding="valid",
+            hl_conv_4 = tf.layers.conv2d(hl_conv_3, kernel_size=5, filters=8, padding="valid",
                                          activation=tf.nn.relu, name="conv_layer_4")
 
-            max_pool_4 = tf.layers.max_pooling2d(hl_conv_4, pool_size=2, strides=2)
+            #max_pool_4 = tf.layers.max_pooling2d(hl_conv_4, pool_size=2, strides=2)
 
             # f 5
-            hl_conv_5 = tf.layers.conv2d(max_pool_4, kernel_size=3, filters=8, padding="valid",
+            hl_conv_5 = tf.layers.conv2d(hl_conv_4, kernel_size=5, filters=8, padding="valid",
                                          activation=tf.nn.relu, name="conv_layer_5")
 
             max_pool_5 = tf.layers.max_pooling2d(hl_conv_5, pool_size=2, strides=2)
@@ -957,10 +957,10 @@ class CNN_training:
             conv_flat = tf.layers.flatten(max_pool_5)
 
             # FC_n
-            fc_n_1 = tf.layers.dense(inputs=conv_flat, units=512, activation=tf.nn.relu, name="fc_n_layer_1")
+            # fc_n_1 = tf.layers.dense(inputs=conv_flat, units=512, activation=tf.nn.relu, name="fc_n_layer_1")
 
             # FC_n
-            fc_n_2 = tf.layers.dense(inputs=fc_n_1, units=64, activation=tf.nn.relu, name="fc_n_layer_2")
+            fc_n_2 = tf.layers.dense(inputs=conv_flat, units=64, activation=tf.nn.relu, name="fc_n_layer_1")
 
             # add 2nd fully connected layers to predict the driving commands
             fc_1 = tf.layers.dense(inputs=fc_n_2, units=1, name="fc_layer_out")
