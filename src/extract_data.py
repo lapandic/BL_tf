@@ -112,7 +112,7 @@ def main(history=1,dropout=1):
 
         # extract the images and car_cmds messages
         ext_images = msgs["/" + duckiebot_name + "/camera_node/image/compressed"].messages
-        ext_car_cmds = msgs["/" + duckiebot_name + "/lane_controller_node/car_cmd"].messages
+        ext_car_cmds = msgs["/" + duckiebot_name + "/joy_mapper_node/car_cmd"].messages
 
         # create dataframe with the images and the images' timestamps
         for num, img in enumerate(ext_images):
