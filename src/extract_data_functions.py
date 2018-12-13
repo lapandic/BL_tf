@@ -41,48 +41,48 @@ def synchronize_data(df_imgs, df_cmds, bag_ID):
     for cmd_index, cmd_time in enumerate(df_cmds['vel_timestamp']):
 
         # we keep only the data for which the duckiebot is moving (we do not want the duckiebot to learn to remain at rest)
-        if ( df_cmds['vel_omega'][cmd_index] != 0) & ( df_cmds['vel_v'][cmd_index] != 0):
+        # if ( df_cmds['vel_omega'][cmd_index] != 0) & ( df_cmds['vel_v'][cmd_index] != 0):
 
-            # find index of image with the closest timestamp to omega velocity's timestamp
-            img_index = ( np.abs( df_imgs['img_timestamp'].values - cmd_time ) ).argmin()
+        # find index of image with the closest timestamp to omega velocity's timestamp
+        img_index = ( np.abs( df_imgs['img_timestamp'].values - cmd_time ) ).argmin()
 
-            # The image precedes the omega velocity, thus image's timestamp must be smaller
-            if ( ( df_imgs['img_timestamp'][img_index] - cmd_time ) > 0 ) & (img_index - 1 < 0):
+        # The image precedes the omega velocity, thus image's timestamp must be smaller
+        if ( ( df_imgs['img_timestamp'][img_index] - cmd_time ) > 0 ) & (img_index - 1 < 0):
 
-                # if the image appears after the velocity and there is no previous image, then
-                # there is no safe synchronization and the data should not be included
-                continue
+            # if the image appears after the velocity and there is no previous image, then
+            # there is no safe synchronization and the data should not be included
+            continue
+        else:
+
+            # if the image appears after the velocity, in this case we know that there is previous image and we
+            # should prefer it
+            if ( df_imgs['img_timestamp'][img_index] - cmd_time ) > 0 :
+
+                img_index = img_index - 1
+
+            # create a numpy array for all data except the images
+            temp_data = np.array( [[
+                df_imgs['img_timestamp'][img_index],
+                df_cmds["vel_timestamp"][cmd_index],
+                df_cmds['vel_v'][cmd_index],
+                df_cmds['vel_omega'][cmd_index],
+                bag_ID
+            ]] )
+
+            # create a new numpy array only for images (images are row vectors of size (1,4608) and it is more
+            # convenient to save them separately
+            temp_imgs = df_imgs['img'][img_index]
+
+            if first_time:
+
+                synch_data = copy(temp_data)
+                synch_imgs = copy(temp_imgs)
+                first_time = False
+
             else:
 
-                # if the image appears after the velocity, in this case we know that there is previous image and we
-                # should prefer it
-                if ( df_imgs['img_timestamp'][img_index] - cmd_time ) > 0 :
-
-                    img_index = img_index - 1
-
-                # create a numpy array for all data except the images
-                temp_data = np.array( [[
-                    df_imgs['img_timestamp'][img_index],
-                    df_cmds["vel_timestamp"][cmd_index],
-                    df_cmds['vel_v'][cmd_index],
-                    df_cmds['vel_omega'][cmd_index],
-                    bag_ID
-                ]] )
-
-                # create a new numpy array only for images (images are row vectors of size (1,4608) and it is more
-                # convenient to save them separately
-                temp_imgs = df_imgs['img'][img_index]
-
-                if first_time:
-
-                    synch_data = copy(temp_data)
-                    synch_imgs = copy(temp_imgs)
-                    first_time = False
-
-                else:
-
-                    synch_data = np.vstack((synch_data, temp_data))
-                    synch_imgs = np.vstack((synch_imgs, temp_imgs))
+                synch_data = np.vstack((synch_data, temp_data))
+                synch_imgs = np.vstack((synch_imgs, temp_imgs))
 
 
     print("Synchronization of {}.bag file is finished. From the initial {} images and {} velocities commands, the extracted "

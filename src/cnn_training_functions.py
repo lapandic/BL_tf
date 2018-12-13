@@ -187,7 +187,10 @@ class CNN_training:
             self.loss_train = self.loss_function(training=True)
             self.loss_test = self.loss_function(training=False)
         else:
-            self.vel_pred = self.model(self.x,training=False) #TODO: Add modularity
+            if self.arch_num > 9:
+                self.vel_pred = self.model(self.x,training=False) 
+            else:
+                self.vel_pred = self.model(self.x)
             self.loss_train = self.loss_function()
             self.loss_test = self.loss_function()
 
