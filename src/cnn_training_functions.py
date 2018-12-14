@@ -1008,6 +1008,6 @@ class CNN_training:
 
             fc_2 = tf.layers.dense(inputs=conv_flat, units=1, name="fc_layer_2")
 
-            fc_out = tf.concat([fc_1,fc_2],axis=0, name="fc_layer_out")
+            fc_out = tf.concat([fc_1,fc_2],axis=1, name="fc_layer_out")
 
             return fc_out
