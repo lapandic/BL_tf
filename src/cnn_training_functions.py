@@ -19,8 +19,8 @@ def load_data(file_path):
     df_img = pd.read_hdf(file_path, key='images', encoding='utf-8')
 
     # extract omega velocities from dataset
-    velocities = df_data['vel_omega'].values
-    velocities = np.reshape(velocities, (-1, 1))
+    velocities = [df_data['vel_omega'].values, df_data['vel_v'].values]
+    velocities = np.reshape(velocities, (-1, 2))
 
     # extract images from dataset
     images = df_img.values
@@ -71,7 +71,7 @@ class CNN_training:
                        self.model3_h2_d2_n7, self.model3_h2_d2_n8, self.model3_h2_d2_n9]
 
         self.models_h1 = [self.model1_h1_d1_n1, self.model2_h1_d2_n1, self.model3_h1_d3_n1, self.model3_h1_d3_n2,
-                       self.model3_h1_d3_n3, self.model7_h1]
+                       self.model3_h1_d3_n3, self.model7_h1, self.model3_h1_d3_3f_2FC1]
 
         self.models_h2 = [self.model2_h2_d1_n3, self.model3_h2_d2_n5, self.model3_h2_d2_n6,
                        self.model3_h2_d2_n7, self.model3_h2_d2_n8, self.model3_h2_d2_n9]
@@ -80,7 +80,7 @@ class CNN_training:
 
         self.models_dronet = [self.model_dronet, self.model_dronet2, self.model_dronet_1rb]
 
-        if history == 1 and arch_num < 6:
+        if history == 1 and arch_num < 7:
             self.model = self.models_h1[arch_num]
         elif history == 2 and arch_num < 6:
             self.model = self.models_h2[arch_num]
@@ -180,7 +180,7 @@ class CNN_training:
 
         # define placeholder for the true omega velocities
         # [None: tensor may hold arbitrary num of velocities, number of omega predictions for each image]
-        self.vel_true = tf.placeholder(tf.float16, shape=[None, 1], name="vel_true")
+        self.vel_true = tf.placeholder(tf.float16, shape=[None, 2], name="vel_true")
         if self.use_batch_normalization:
             self.vel_pred_train = self.model(self.x, training=True)
             self.vel_pred_test = self.model(self.x, training=False)
@@ -222,9 +222,6 @@ class CNN_training:
             tf.train.write_graph(tf_graph.as_graph_def(), graph_path, 'graph.pbtxt', as_text= True)
             tf.train.write_graph(tf_graph.as_graph_def(), graph_path, 'graph.pb', as_text= False)
 
-            model_vars = tf.trainable_variables()
-            tf.contrib.slim.model_analyzer.analyze_vars(model_vars, print_info=True)
-
             for epoch in range(self.epochs):
 
                 # run train cycle
@@ -248,6 +245,9 @@ class CNN_training:
                 # save weights every 100 epochs
                 if epoch % 100 == 0:
                     saver.save(self.sess, logs_train_path, epoch)
+
+            model_vars = tf.trainable_variables()
+            tf.contrib.slim.model_analyzer.analyze_vars(model_vars, print_info=True)
 
         # close summary writer
         train_writer.close()
@@ -969,3 +969,45 @@ class CNN_training:
             fc_1 = tf.layers.dense(inputs=fc_n_2, units=1, name="fc_layer_out")
 
             return fc_1
+
+    def model3_h1_d3_3f_2FC1(self, x):
+        '''
+        Define model of CNN under the TensorFlow scope "ConvNet".
+        The scope is used for better organization and visualization in TensorBoard
+
+        :return: output layer
+        '''
+
+        with tf.variable_scope('ConvNet', reuse=tf.AUTO_REUSE):
+            # define the 4-d tensor expected by TensorFlow
+            # [-1: arbitrary num of images, img_height, img_width, num_channels]
+            x_img = tf.reshape(x, [-1, 48, 96, 3])
+
+            # define 1st convolutional layer
+            hl_conv_1 = tf.layers.conv2d(x_img, kernel_size=5, filters=2, padding="valid",
+                                         activation=tf.nn.relu, name="conv_layer_1")
+
+            max_pool_1 = tf.layers.max_pooling2d(hl_conv_1, pool_size=2, strides=2)
+
+            # define 2nd convolutional layer
+            hl_conv_2 = tf.layers.conv2d(max_pool_1, kernel_size=5, filters=8, padding="valid",
+                                         activation=tf.nn.relu, name="conv_layer_2")
+
+            max_pool_2 = tf.layers.max_pooling2d(hl_conv_2, pool_size=2, strides=2)
+
+            hl_conv_3 = tf.layers.conv2d(max_pool_2, kernel_size=5, filters=8, padding="valid",
+                                         activation=tf.nn.relu, name="conv_layer_3")
+
+            max_pool_3 = tf.layers.max_pooling2d(hl_conv_3, pool_size=2, strides=2)
+
+            # flatten tensor to connect it with the fully connected layers
+            conv_flat = tf.layers.flatten(max_pool_3)
+
+            # add 2nd fully connected layers to predict the driving commands
+            fc_1 = tf.layers.dense(inputs=conv_flat, units=1, name="fc_layer_1")
+
+            fc_2 = tf.layers.dense(inputs=conv_flat, units=1, name="fc_layer_2")
+
+            fc_out = tf.concat([fc_1,fc_2],name="fc_layer_out")
+
+            return fc_out
