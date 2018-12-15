@@ -8,7 +8,7 @@ from cnn_training_functions import *
 os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"
 os.environ["CUDA_VISIBLE_DEVICES"]="0"
 
-def main(arch_num,history,depth,lr,epochs_n,use_batch_normalization):
+def main(arch_num,history,depth,lr,epochs_n,use_batch_normalization,steps_ahead):
 
     # define path for training dataset
     file_path_train = os.path.join(os.getcwd(), 'data-'+str(history), 'train', 'train_set.h5')
@@ -30,13 +30,15 @@ def main(arch_num,history,depth,lr,epochs_n,use_batch_normalization):
     # read train data
     print('Reading train dataset')
     train_velocities, train_images = load_data(file_path_train)
+    train_velocities = np.reshape(train_velocities, (-1, steps_ahead))
 
     # read test data
     print('Reading test dataset')
     test_velocities, test_images = load_data(file_path_test)
+    test_velocities = np.reshape(test_velocities, (-1, steps_ahead))
 
     # construct model name based on the hyper parameters
-    model_name = form_model_name(batch_size, learning_rate, optimizer, epochs,history,arch_num,depth,use_batch_normalization)
+    model_name = form_model_name(batch_size, learning_rate, optimizer, epochs,history,arch_num,depth,use_batch_normalization,steps_ahead)
 
     print('Starting training for {} model.'.format(model_name))
 
@@ -44,7 +46,7 @@ def main(arch_num,history,depth,lr,epochs_n,use_batch_normalization):
     start_time = time.time()
 
     # train model
-    cnn_train = CNN_training(batch_size, epochs, learning_rate, optimizer, history,arch_num,use_batch_normalization)
+    cnn_train = CNN_training(batch_size, epochs, learning_rate, optimizer, history,arch_num,use_batch_normalization,steps_ahead)
     cnn_train.training(model_name, train_velocities, train_images, test_velocities, test_images)
 
     # calculate total training time in minutes
@@ -55,6 +57,7 @@ def main(arch_num,history,depth,lr,epochs_n,use_batch_normalization):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-bs','--backsteps',default=1, help='Number of steps in past', type=int)
+    parser.add_argument('-fs', '--steps_ahead', default=1, help='Number of steps in future', type=int)
     parser.add_argument('-a', '--arch_num', default=0, help='Unique id number of architecture', type=int)
     parser.add_argument('-d', '--depth', default=1, help='Depth', type=int)
     parser.add_argument('-e', '--epochs', default=1000, help='Number of epochs', type=int)
@@ -63,4 +66,4 @@ if __name__ == '__main__':
     parser.add_argument('-bn', '--batch_normalization', default=0, help='Use batch normalization', type=int)
     args = vars(parser.parse_args())
     os.environ["CUDA_VISIBLE_DEVICES"] = str(args['gpu'])
-    main(args['arch_num'],args['backsteps'],args['depth'],args['learning_rate'],args['epochs'],args['batch_normalization'])
+    main(args['arch_num'],args['backsteps'],args['depth'],args['learning_rate'],args['epochs'],args['batch_normalization'],args['steps_ahead'])

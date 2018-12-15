@@ -41,48 +41,49 @@ def synchronize_data(df_imgs, df_cmds, bag_ID):
     for cmd_index, cmd_time in enumerate(df_cmds['vel_timestamp']):
 
         # we keep only the data for which the duckiebot is moving (we do not want the duckiebot to learn to remain at rest)
-        # if ( df_cmds['vel_omega'][cmd_index] != 0) & ( df_cmds['vel_v'][cmd_index] != 0):
+        #  df_cmds['vel_omega'][cmd_index] != 0) <- these are valuable for driving straight!
+        if ( df_cmds['vel_v'][cmd_index] != 0):
 
-        # find index of image with the closest timestamp to omega velocity's timestamp
-        img_index = ( np.abs( df_imgs['img_timestamp'].values - cmd_time ) ).argmin()
+            # find index of image with the closest timestamp to omega velocity's timestamp
+            img_index = ( np.abs( df_imgs['img_timestamp'].values - cmd_time ) ).argmin()
 
-        # The image precedes the omega velocity, thus image's timestamp must be smaller
-        if ( ( df_imgs['img_timestamp'][img_index] - cmd_time ) > 0 ) & (img_index - 1 < 0):
+            # The image precedes the omega velocity, thus image's timestamp must be smaller
+            if ( ( df_imgs['img_timestamp'][img_index] - cmd_time ) > 0 ) & (img_index - 1 < 0):
 
-            # if the image appears after the velocity and there is no previous image, then
-            # there is no safe synchronization and the data should not be included
-            continue
-        else:
-
-            # if the image appears after the velocity, in this case we know that there is previous image and we
-            # should prefer it
-            if ( df_imgs['img_timestamp'][img_index] - cmd_time ) > 0 :
-
-                img_index = img_index - 1
-
-            # create a numpy array for all data except the images
-            temp_data = np.array( [[
-                df_imgs['img_timestamp'][img_index],
-                df_cmds["vel_timestamp"][cmd_index],
-                df_cmds['vel_v'][cmd_index],
-                df_cmds['vel_omega'][cmd_index],
-                bag_ID
-            ]] )
-
-            # create a new numpy array only for images (images are row vectors of size (1,4608) and it is more
-            # convenient to save them separately
-            temp_imgs = df_imgs['img'][img_index]
-
-            if first_time:
-
-                synch_data = copy(temp_data)
-                synch_imgs = copy(temp_imgs)
-                first_time = False
-
+                # if the image appears after the velocity and there is no previous image, then
+                # there is no safe synchronization and the data should not be included
+                continue
             else:
 
-                synch_data = np.vstack((synch_data, temp_data))
-                synch_imgs = np.vstack((synch_imgs, temp_imgs))
+                # if the image appears after the velocity, in this case we know that there is previous image and we
+                # should prefer it
+                if ( df_imgs['img_timestamp'][img_index] - cmd_time ) > 0 :
+
+                    img_index = img_index - 1
+
+                # create a numpy array for all data except the images
+                temp_data = np.array( [[
+                    df_imgs['img_timestamp'][img_index],
+                    df_cmds["vel_timestamp"][cmd_index],
+                    df_cmds['vel_v'][cmd_index],
+                    df_cmds['vel_omega'][cmd_index],
+                    bag_ID
+                ]] )
+
+                # create a new numpy array only for images (images are row vectors of size (1,4608) and it is more
+                # convenient to save them separately
+                temp_imgs = df_imgs['img'][img_index]
+
+                if first_time:
+
+                    synch_data = copy(temp_data)
+                    synch_imgs = copy(temp_imgs)
+                    first_time = False
+
+                else:
+
+                    synch_data = np.vstack((synch_data, temp_data))
+                    synch_imgs = np.vstack((synch_imgs, temp_imgs))
 
 
     print("Synchronization of {}.bag file is finished. From the initial {} images and {} velocities commands, the extracted "
@@ -93,7 +94,7 @@ def synchronize_data(df_imgs, df_cmds, bag_ID):
 
 
 
-def backstepping_prep(temp_imgs,temp_data,history,dropout):
+def back_forth_prep(temp_imgs,temp_data,history,dropout,steps_ahead):
 
     num_of_images = temp_imgs.shape[0]
     img_width = temp_imgs.shape[1]
@@ -109,6 +110,20 @@ def backstepping_prep(temp_imgs,temp_data,history,dropout):
     for i in range(0,length_of_dataset):
         imgs[i] = np.copy(temp_imgs[i:i+idx:dropout].flatten())
 
-    data = temp_data[:length_of_dataset]
+    temp_data = temp_data[len(temp_data)-length_of_dataset:]
+
+    num_of_rows = len(temp_data) - steps_ahead + 1
+    data = temp_data[:num_of_rows, :2]
+
+    # copy vel_v
+    for i in range(0, steps_ahead):
+        data = np.append(data, np.transpose([temp_data[i:i + num_of_rows, 2]]), axis=1)
+    # copy vel_omega
+    for i in range(0, steps_ahead):
+        data = np.append(data, np.transpose([temp_data[i:i + num_of_rows, 3]]), axis=1)
+
+    data = np.append(data, np.transpose([temp_data[:num_of_rows, 4]]), axis=1)
+
+    imgs = imgs[:num_of_rows]
 
     return imgs,data

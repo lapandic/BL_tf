@@ -9,7 +9,7 @@ import collections
 import rosbag
 import cv_bridge
 from copy import copy
-from extract_data_functions import image_preprocessing, synchronize_data, backstepping_prep
+from extract_data_functions import image_preprocessing, synchronize_data, back_forth_prep
 
 # A collection of ros messages coming from a single topic.
 MessageCollection = collections.namedtuple("MessageCollection", ["topic", "type", "messages"])
@@ -49,7 +49,7 @@ def extract_messages(path, requested_topics):
 
     return extracted_messages
 
-def main(history=1,dropout=1):
+def main(history=1,dropout=1,steps_ahead=1):
 
     # define the list of topics that you want to extract
     ros_topics = [
@@ -63,7 +63,7 @@ def main(history=1,dropout=1):
     bags_directory = os.path.join(os.getcwd(), "bag_files")
 
     # define data_directory
-    data_directory = 'data-'+str(history)
+    data_directory = 'data-bs-'+str(history)+'-fs-'+str(steps_ahead)
     if not os.path.exists(data_directory):
         os.makedirs(data_directory)
 
@@ -173,8 +173,8 @@ def main(history=1,dropout=1):
         # print temp_synch_data.shape, temp_synch_imgs.shape
 
         # backstepping data preparation
-        if history > 1:
-            temp_synch_imgs,temp_synch_data = backstepping_prep(temp_synch_imgs,temp_synch_data,history,dropout)
+        if history > 1 or steps_ahead > 1:
+            temp_synch_imgs,temp_synch_data = back_forth_prep(temp_synch_imgs,temp_synch_data,history,dropout,steps_ahead)
 
         if first_time:
             synch_data = copy(temp_synch_data)
@@ -192,29 +192,27 @@ def main(history=1,dropout=1):
     # define size of train dataset
     train_size = int(0.9 * synch_data.shape[0])
 
+    #print("Synch_data: {}".format(synch_data))
+    #print("Synch_imgs: {}".format(synch_imgs))
+
+    df_columns=['img_timestamp','vel_timestamp']
+    for i in range(0,steps_ahead):
+        df_columns.append('vel_v_'+str(i+1))
+    for i in range(0, steps_ahead):
+        df_columns.append('vel_omega_' + str(i + 1))
+    df_columns.append('bag_ID')
+
     # create train dataframe
-    df_data_train = pd.DataFrame({
-        'img_timestamp': synch_data[:train_size, 0],
-        'vel_timestamp': synch_data[:train_size, 1],
-        'vel_v': synch_data[:train_size, 2],
-        'vel_omega': synch_data[:train_size, 3],
-        'bag_ID': synch_data[:train_size, 4],
-    })
+    df_data_train = pd.DataFrame(data=synch_data[:train_size,:],index=range(train_size),columns=df_columns)
 
     # create train dataframe for images in order to save them in the same .h5 file with the rest train data
     df_img_train = pd.DataFrame(data=synch_imgs[:train_size,:],index=range(train_size))
 
     # create test dataframe
-    df_data_test = pd.DataFrame({
-        'img_timestamp': synch_data[train_size:, 0],
-        'vel_timestamp': synch_data[train_size:, 1],
-        'vel_v': synch_data[train_size:, 2],
-        'vel_omega': synch_data[train_size:, 3],
-        'bag_ID': synch_data[train_size:, 4],
-    })
-
+    df_data_test = pd.DataFrame(data=synch_data[train_size:,:], index=range(train_size,synch_data.shape[0]), columns=df_columns)
     # create test dataframe for images in order to save them in the same .h5 file with the rest test data
     df_img_test = pd.DataFrame(data=synch_imgs[train_size:,:],index=range(train_size,synch_data.shape[0]))
+    # df_data_test.to_csv('test.csv', sep='\t')
     #pd.DataFrame({
         #'img': synch_imgs[train_size:,:]
     #},index=range(train_size,synch_data.shape[0]))
@@ -262,7 +260,8 @@ def main(history=1,dropout=1):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('-bs','--backsteps',default=5, help='Number of steps in past', type=int)
-    parser.add_argument('-d','--dropout',default=7, help='Number of images skipped in dataset', type=int)
+    parser.add_argument('-bs','--backsteps',default=1, help='Number of steps in past', type=int)
+    parser.add_argument('-d','--dropout',default=1, help='Number of images skipped in dataset', type=int)
+    parser.add_argument('-fs', '--steps_ahead', default=1, help='Number of steps in future', type=int)
     args = vars(parser.parse_args())
-    main(args['backsteps'],args['dropout'])
+    main(args['backsteps'],args['dropout'],args['steps_ahead'])

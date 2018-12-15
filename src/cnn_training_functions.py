@@ -19,8 +19,8 @@ def load_data(file_path):
     df_img = pd.read_hdf(file_path, key='images', encoding='utf-8')
 
     # extract omega velocities from dataset
-    velocities = [df_data['vel_omega'].values, df_data['vel_v'].values]
-    velocities = np.reshape(velocities, (-1, 2))
+    velocities = df_data['vel_omega'].values
+    # velocities = np.reshape(velocities, (-1, 1))
 
     # extract images from dataset
     images = df_img.values
@@ -50,7 +50,7 @@ def form_model_name(batch_size, lr, optimizer, epochs,history,arch_num,depth,bat
 
 class CNN_training:
 
-    def __init__(self, batch, epochs, learning_rate, optimizer,history,arch_num,use_batch_normalization):
+    def __init__(self, batch, epochs, learning_rate, optimizer,history,arch_num,use_batch_normalization,steps_ahead):
 
         self.batch_size = batch
         self.epochs = epochs
@@ -63,6 +63,7 @@ class CNN_training:
         self.loss = None
         self.loss_train = None
         self.loss_test = None
+        self.steps_ahead = steps_ahead
 
 
         self.models = [self.model1_h1_d1_n1, self.model2_h1_d2_n1, self.model2_h1_d2_n2, self.model2_h2_d1_n3,
@@ -180,7 +181,7 @@ class CNN_training:
 
         # define placeholder for the true omega velocities
         # [None: tensor may hold arbitrary num of velocities, number of omega predictions for each image]
-        self.vel_true = tf.placeholder(tf.float16, shape=[None, 2], name="vel_true")
+        self.vel_true = tf.placeholder(tf.float16, shape=[None, self.steps_ahead], name="vel_true")
         if self.use_batch_normalization:
             self.vel_pred_train = self.model(self.x, training=True)
             self.vel_pred_test = self.model(self.x, training=False)
