@@ -7,7 +7,7 @@ import os
 import datetime
 from cnn_training_models import *
 
-def load_data(file_path):
+def load_data(file_path,steps_ahead):
     '''
     Loads images and velocities from hdf files and checks for potential mismatch in the number of images and velocities
 
@@ -20,13 +20,14 @@ def load_data(file_path):
     df_img = pd.read_hdf(file_path, key='images', encoding='utf-8')
 
     # extract omega velocities from dataset
-    velocities = df_data['vel_omega'].values
-    # velocities = np.reshape(velocities, (-1, 1))
+    velocities = np.transpose([df_data['vel_omega_'+str(1)].values])
+    for i in range(1,steps_ahead):
+        velocities = np.append(velocities, np.transpose([df_data['vel_omega_'+str(i+1)].values]),axis=1)
 
     # extract images from dataset
     images = df_img.values
 
-    print('The dataset is loaded: {} images and {} omega velocities.'.format(images.shape[0], velocities.shape[0]))
+    print('The dataset is loaded: {} images and {} omega velocities.'.format(images.shape, velocities.shape))
 
     if not images.shape[0] == velocities.shape[0]:
         raise ValueError("The number of images and velocities must be the same.")
@@ -34,7 +35,7 @@ def load_data(file_path):
     return velocities, images
 
 
-def form_model_name(batch_size, lr, optimizer, epochs,history,arch_num,depth,batch_normalization):
+def form_model_name(batch_size, lr, optimizer, epochs,history,arch_num,depth,batch_normalization,steps_ahead):
     '''
     Creates name of model as a string, based on the defined hyperparameters used in training
 
@@ -47,7 +48,7 @@ def form_model_name(batch_size, lr, optimizer, epochs,history,arch_num,depth,bat
     '''
 
     #return "batch={},lr={},optimizer={},epochs={},HISTORY={}".format(batch_size, lr, optimizer, epochs,history)
-    return "datetime={},arch_num={},history={},depth={},lr={},opt={},bn={}".format(datetime.datetime.now().strftime("%y%m%d%H%M"),arch_num,history,depth,lr,optimizer,batch_normalization)
+    return "datetime={},bs={},fs={},arch_num={},lr={},opt={}".format(datetime.datetime.now().strftime("%y%m%d%H%M"),history,steps_ahead,arch_num,lr,optimizer)
 
 class CNN_training:
 

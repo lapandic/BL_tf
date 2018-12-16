@@ -741,7 +741,7 @@ def model2_h2_d1_n3(x):
         # [-1: arbitrary num of images, img_height, img_width, num_channels]
         x_img = tf.reshape(x, [-1, 48 * history, 96, 3])
 
-       x_array = tf.split(x_img, num_or_size_splits=history, axis=1)
+        x_array = tf.split(x_img, num_or_size_splits=history, axis=1)
 
         hl_conv_1 = []
         max_pool_1 = []
@@ -859,7 +859,7 @@ def model3_h3_d1_n4(x):
     with tf.variable_scope('ConvNet', reuse=tf.AUTO_REUSE):
         x_img = tf.reshape(x, [-1, 48 * history, 96, 3])
 
-       x_array = tf.split(x_img, num_or_size_splits=history, axis=1)
+        x_array = tf.split(x_img, num_or_size_splits=history, axis=1)
 
         hl_conv_1 = []
         max_pool_1 = []
@@ -887,7 +887,7 @@ def model3_h2_d2_n5(x):
     with tf.variable_scope('ConvNet', reuse=tf.AUTO_REUSE):
         x_img = tf.reshape(x, [-1, 48 * history, 96, 3])
 
-       x_array = tf.split(x_img, num_or_size_splits=history, axis=1)
+        x_array = tf.split(x_img, num_or_size_splits=history, axis=1)
 
         # f block pipe 1
         hl_conv_1 = tf.layers.conv2d(x_array[0], kernel_size=5, filters=2, padding="valid",
@@ -921,7 +921,7 @@ def model3_h2_d2_n6(x):
     with tf.variable_scope('ConvNet', reuse=tf.AUTO_REUSE):
         x_img = tf.reshape(x, [-1, 48 * history, 96, 3])
 
-       x_array = tf.split(x_img, num_or_size_splits=history, axis=1)
+        x_array = tf.split(x_img, num_or_size_splits=history, axis=1)
 
         # f block pipe 1
         hl_conv_1_1 = tf.layers.conv2d(x_array[0], kernel_size=5, filters=2, padding="valid",
@@ -958,7 +958,7 @@ def model3_h2_d2_n7(x):
     with tf.variable_scope('ConvNet', reuse=tf.AUTO_REUSE):
         x_img = tf.reshape(x, [-1, 48 * history, 96, 3])
 
-       x_array = tf.split(x_img, num_or_size_splits=history, axis=1)
+        x_array = tf.split(x_img, num_or_size_splits=history, axis=1)
 
         # f block pipe 1
         hl_conv_1_1 = tf.layers.conv2d(x_array[0], kernel_size=5, filters=2, padding="valid",
@@ -995,7 +995,7 @@ def model3_h2_d2_n8(x):
     with tf.variable_scope('ConvNet', reuse=tf.AUTO_REUSE):
         x_img = tf.reshape(x, [-1, 48 * history, 96, 3])
 
-       x_array = tf.split(x_img, num_or_size_splits=history, axis=1)
+        x_array = tf.split(x_img, num_or_size_splits=history, axis=1)
 
         # f block pipe 1
         hl_conv_1_1 = tf.layers.conv2d(x_array[0], kernel_size=5, filters=2, padding="valid",
@@ -1029,7 +1029,7 @@ def model3_h2_d2_n9(x):
     with tf.variable_scope('ConvNet', reuse=tf.AUTO_REUSE):
         x_img = tf.reshape(x, [-1, 48 * history, 96, 3])
 
-       x_array = tf.split(x_img, num_or_size_splits=history, axis=1)
+        x_array = tf.split(x_img, num_or_size_splits=history, axis=1)
 
         # f block pipe 1
         hl_conv_1_1 = tf.layers.conv2d(x_array[0], kernel_size=5, filters=2, padding="valid",

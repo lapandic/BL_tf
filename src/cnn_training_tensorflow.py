@@ -11,8 +11,9 @@ os.environ["CUDA_VISIBLE_DEVICES"]="0"
 def main(arch_num,history,depth,lr,epochs_n,use_batch_normalization,steps_ahead):
 
     # define path for training dataset
-    file_path_train = os.path.join(os.getcwd(), 'data-'+str(history), 'train', 'train_set.h5')
-    file_path_test = os.path.join(os.getcwd(), 'data-'+str(history), 'test', 'test_set.h5')
+    data_directory = 'data-bs-' + str(history) + '-fs-' + str(steps_ahead)
+    file_path_train = os.path.join(os.getcwd(), data_directory, 'train', 'train_set.h5')
+    file_path_test = os.path.join(os.getcwd(), data_directory, 'test', 'test_set.h5')
 
     # define batch_size (e.g 50, 100)
     batch_size = 100
@@ -29,13 +30,13 @@ def main(arch_num,history,depth,lr,epochs_n,use_batch_normalization,steps_ahead)
 
     # read train data
     print('Reading train dataset')
-    train_velocities, train_images = load_data(file_path_train)
-    train_velocities = np.reshape(train_velocities, (-1, steps_ahead))
+    train_velocities, train_images = load_data(file_path_train,steps_ahead)
+    #train_velocities = np.reshape(train_velocities, (-1, steps_ahead))
 
     # read test data
     print('Reading test dataset')
-    test_velocities, test_images = load_data(file_path_test)
-    test_velocities = np.reshape(test_velocities, (-1, steps_ahead))
+    test_velocities, test_images = load_data(file_path_test,steps_ahead)
+    #test_velocities = np.reshape(test_velocities, (-1, steps_ahead))
 
     # construct model name based on the hyper parameters
     model_name = form_model_name(batch_size, learning_rate, optimizer, epochs,history,arch_num,depth,use_batch_normalization,steps_ahead)
