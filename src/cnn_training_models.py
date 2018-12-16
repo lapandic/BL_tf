@@ -10,13 +10,13 @@ def get_model(history,steps_ahead,arch_num):
 
     models_bs_3_fs_1 = [model_bs_3_fs_1_d3, model_bs_3_fs_1_rbs, model_bs_3_fs_1_d2]
 
-    models_bs_1_fs_5 = [model_bs_1_fs_5_d3, model_bs_1_fs_5_d4]
+    models_bs_1_fs_5 = [model_bs_1_fs_5_d3, model_bs_1_fs_5_d4, model_bs_1_fs_5_d2]
 
-    models_bs_2_fs_5 = [model_bs_2_fs_5_d3, model_bs_2_fs_5_d4]
+    models_bs_2_fs_5 = [model_bs_2_fs_5_d3, model_bs_2_fs_5_d4, model_bs_2_fs_5_d2]
 
-    models_bs_3_fs_5 = [model_bs_3_fs_5_d3, model_bs_3_fs_5_d4]
+    models_bs_3_fs_5 = [model_bs_3_fs_5_d3, model_bs_3_fs_5_d4, model_bs_3_fs_5_d2]
 
-    models_bs_4_fs_5 = [model_bs_4_fs_5_d3, model_bs_4_fs_5_d4]
+    models_bs_4_fs_5 = [model_bs_4_fs_5_d3, model_bs_4_fs_5_d4, model_bs_4_fs_5_d2]
 
     fs_1 = [models_bs_1_fs_1, models_bs_2_fs_1, models_bs_3_fs_1]
     fs_5 = [models_bs_1_fs_5, models_bs_2_fs_5, models_bs_3_fs_5, models_bs_4_fs_5]
@@ -25,7 +25,7 @@ def get_model(history,steps_ahead,arch_num):
         if (history > 1 and arch_num < 3) or (history == 1 and arch_num < 6):
             model = fs_1[history-1][arch_num]
     elif steps_ahead == 5:
-        if history < 4 and arch_num < 2:
+        if history < 4 and arch_num < 3:
             model = fs_5[history-1][arch_num]
     else:
         print("Requested model not implemented!")
@@ -61,6 +61,40 @@ def get_old_model(history,steps_ahead,arch_num):
     else:
         print("Requested model not implemented!")
     return model
+
+
+def model_bs_1_fs_5_d2(x):
+    '''
+    Define model of CNN under the TensorFlow scope "ConvNet".
+    The scope is used for better organization and visualization in TensorBoard
+
+    :return: output layer
+    '''
+    print("model_bs_1_fs_5_d3 loaded")
+    with tf.variable_scope('ConvNet', reuse=tf.AUTO_REUSE):
+        # define the 4-d tensor expected by TensorFlow
+        # [-1: arbitrary num of images, img_height, img_width, num_channels]
+        x_img = tf.reshape(x, [-1, 48, 96, 3])
+
+        # define 1st convolutional layer
+        hl_conv_1 = tf.layers.conv2d(x_img, kernel_size=5, filters=2, padding="valid",
+                                     activation=tf.nn.relu, name="conv_layer_1")
+
+        max_pool_1 = tf.layers.max_pooling2d(hl_conv_1, pool_size=2, strides=2)
+
+        # define 2nd convolutional layer
+        hl_conv_2 = tf.layers.conv2d(max_pool_1, kernel_size=5, filters=8, padding="valid",
+                                     activation=tf.nn.relu, name="conv_layer_2")
+
+        max_pool_2 = tf.layers.max_pooling2d(hl_conv_2, pool_size=2, strides=2)
+
+        # flatten tensor to connect it with the fully connected layers
+        conv_flat = tf.layers.flatten(max_pool_2)
+
+        # add 2nd fully connected layers to predict the driving commands
+        fc_1 = tf.layers.dense(inputs=conv_flat, units=5, name="fc_layer_out")
+
+        return fc_1
 
 def model_bs_1_fs_5_d3(x):
     '''
@@ -139,6 +173,117 @@ def model_bs_1_fs_5_d4(x):
         fc_out = tf.layers.dense(inputs=fc_1, units=5, name="fc_layer_out")
 
         return fc_out
+
+def model_bs_2_fs_5_d2(x):
+    history = 2
+    with tf.variable_scope('ConvNet', reuse=tf.AUTO_REUSE):
+        # define the 4-d tensor expected by TensorFlow
+        # [-1: arbitrary num of images, img_height, img_width, num_channels]
+        x_img = tf.reshape(x, [-1, 48 * history, 96, 3])
+
+    x_array = tf.split(x_img, num_or_size_splits=history, axis=1)
+
+    hl_conv_1 = []
+    max_pool_1 = []
+    hl_conv_2 = []
+    max_pool_2 = []
+    conv_flat = []
+
+    for i in range(len(x_array)):
+        # define 1st convolutional layer
+        hl_conv_1.append(tf.layers.conv2d(x_array[i], kernel_size=5, filters=2, padding="valid",
+                                          activation=tf.nn.relu, name="conv_layer_1_" + str(i)))
+
+        max_pool_1.append(tf.layers.max_pooling2d(hl_conv_1[i], pool_size=2, strides=2))
+
+        # f2
+        hl_conv_2.append(tf.layers.conv2d(max_pool_1[i], kernel_size=5, filters=8, padding="valid",
+                                          activation=tf.nn.relu, name="conv_layer_2_" + str(i)))
+
+        max_pool_2.append(tf.layers.max_pooling2d(hl_conv_2[i], pool_size=2, strides=2))
+
+        # flatten tensor to connect it with the fully connected layers
+        conv_flat.append(tf.layers.flatten(max_pool_2[i]))
+
+    commands_stack = tf.concat(conv_flat, axis=1)
+
+    fc = tf.layers.dense(inputs=commands_stack, units=5, name="fc_layer_out")
+
+    return fc
+
+def model_bs_3_fs_5_d2(x):
+    history = 3
+    with tf.variable_scope('ConvNet', reuse=tf.AUTO_REUSE):
+        # define the 4-d tensor expected by TensorFlow
+        # [-1: arbitrary num of images, img_height, img_width, num_channels]
+        x_img = tf.reshape(x, [-1, 48 * history, 96, 3])
+
+    x_array = tf.split(x_img, num_or_size_splits=history, axis=1)
+
+    hl_conv_1 = []
+    max_pool_1 = []
+    hl_conv_2 = []
+    max_pool_2 = []
+    conv_flat = []
+
+    for i in range(len(x_array)):
+        # define 1st convolutional layer
+        hl_conv_1.append(tf.layers.conv2d(x_array[i], kernel_size=5, filters=2, padding="valid",
+                                          activation=tf.nn.relu, name="conv_layer_1_" + str(i)))
+
+        max_pool_1.append(tf.layers.max_pooling2d(hl_conv_1[i], pool_size=2, strides=2))
+
+        # f2
+        hl_conv_2.append(tf.layers.conv2d(max_pool_1[i], kernel_size=5, filters=8, padding="valid",
+                                          activation=tf.nn.relu, name="conv_layer_2_" + str(i)))
+
+        max_pool_2.append(tf.layers.max_pooling2d(hl_conv_2[i], pool_size=2, strides=2))
+
+        # flatten tensor to connect it with the fully connected layers
+        conv_flat.append(tf.layers.flatten(max_pool_2[i]))
+
+    commands_stack = tf.concat(conv_flat, axis=1)
+
+    fc = tf.layers.dense(inputs=commands_stack, units=5, name="fc_layer_out")
+
+    return fc
+
+def model_bs_4_fs_5_d2(x):
+    history = 4
+    with tf.variable_scope('ConvNet', reuse=tf.AUTO_REUSE):
+        # define the 4-d tensor expected by TensorFlow
+        # [-1: arbitrary num of images, img_height, img_width, num_channels]
+        x_img = tf.reshape(x, [-1, 48 * history, 96, 3])
+
+    x_array = tf.split(x_img, num_or_size_splits=history, axis=1)
+
+    hl_conv_1 = []
+    max_pool_1 = []
+    hl_conv_2 = []
+    max_pool_2 = []
+    conv_flat = []
+
+    for i in range(len(x_array)):
+        # define 1st convolutional layer
+        hl_conv_1.append(tf.layers.conv2d(x_array[i], kernel_size=5, filters=2, padding="valid",
+                                          activation=tf.nn.relu, name="conv_layer_1_" + str(i)))
+
+        max_pool_1.append(tf.layers.max_pooling2d(hl_conv_1[i], pool_size=2, strides=2))
+
+        # f2
+        hl_conv_2.append(tf.layers.conv2d(max_pool_1[i], kernel_size=5, filters=8, padding="valid",
+                                          activation=tf.nn.relu, name="conv_layer_2_" + str(i)))
+
+        max_pool_2.append(tf.layers.max_pooling2d(hl_conv_2[i], pool_size=2, strides=2))
+
+        # flatten tensor to connect it with the fully connected layers
+        conv_flat.append(tf.layers.flatten(max_pool_2[i]))
+
+    commands_stack = tf.concat(conv_flat, axis=1)
+
+    fc = tf.layers.dense(inputs=commands_stack, units=5, name="fc_layer_out")
+
+    return fc
 
 def model_bs_2_fs_5_d3(x):
     history = 2
