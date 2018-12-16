@@ -449,27 +449,27 @@ def model_bs_3_fs_1_rbs(x):
         max_pool_1.append(tf.layers.max_pooling2d(hl_conv_1[i], pool_size=2, strides=2))
 
         # Res block 1
-        rb_relu_1_1[i] = tf.nn.relu(max_pool_1[i], name="rb_relu_1_1_" + str(i))
-        rb_conv_1_1[i] = tf.layers.conv2d(rb_relu_1_1[i], kernel_size=3, filters=32, strides=2, padding="same",
-                                       kernel_initializer=tf.keras.initializers.he_normal(),
-                                       kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-4),
-                                       name="rb_conv_1_1_" + str(i))
+        rb_relu_1_1.append(tf.nn.relu(max_pool_1[i], name="rb_relu_1_1_" + str(i)))
+        rb_conv_1_1.append(tf.layers.conv2d(rb_relu_1_1[i], kernel_size=3, filters=32, strides=2, padding="same",
+                                            kernel_initializer=tf.keras.initializers.he_normal(),
+                                            kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-4),
+                                            name="rb_conv_1_1_" + str(i)))
 
-        rb_relu_1_2[i] = tf.nn.relu(rb_conv_1_1[i], name="rb_relu_1_2_" + str(i))
-        rb_conv_1_2[i] = tf.layers.conv2d(rb_relu_1_2[i], kernel_size=3, filters=32, padding="same",
-                                       kernel_initializer=tf.keras.initializers.he_normal(),
-                                       kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-4),
-                                       name="rb_conv_1_2_" + str(i))
+        rb_relu_1_2.append(tf.nn.relu(rb_conv_1_1[i], name="rb_relu_1_2_" + str(i)))
+        rb_conv_1_2.append(tf.layers.conv2d(rb_relu_1_2[i], kernel_size=3, filters=32, padding="same",
+                                            kernel_initializer=tf.keras.initializers.he_normal(),
+                                            kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-4),
+                                            name="rb_conv_1_2_" + str(i)))
 
-        rb_conv_1_3[i] = tf.layers.conv2d(rb_conv_1_2[i], kernel_size=1, filters=32, strides=2, padding="same",
-                                       name="rb_conv_1_3_" + str(i))
+        rb_conv_1_3.append(tf.layers.conv2d(rb_conv_1_2[i], kernel_size=1, filters=32, strides=2, padding="same",
+                                            name="rb_conv_1_3_" + str(i)))
 
-        rb_out_1[i] = tf.add(rb_conv_1_2[i], rb_conv_1_3[i], name="rb_out_1_" + str(i))
+        rb_out_1.append(tf.add(rb_conv_1_2[i], rb_conv_1_3[i], name="rb_out_1_" + str(i)))
 
         # flatten
-        flat[i] = tf.layers.flatten(rb_out_1[i])
-        flat_relu[i] = tf.nn.relu(flat[i], name="flat_relu_out_" + str(i))
-        flat_dropout[i] = tf.layers.dropout(flat_relu[i], name="flat_dropout_out_" + str(i))
+        flat.append(tf.layers.flatten(rb_out_1[i]))
+        flat_relu.append(tf.nn.relu(flat[i], name="flat_relu_out_" + str(i)))
+        flat_dropout.append(tf.layers.dropout(flat_relu[i], name="flat_dropout_out_" + str(i)))
 
         # FC_1 - predicting steering angle
         # fc_1_steer = tf.layers.dense(inputs=flat_dropout, units=1, name="fc_layer_out")
@@ -514,27 +514,27 @@ def model_bs_2_fs_1_rbs(x):
         max_pool_1.append(tf.layers.max_pooling2d(hl_conv_1[i], pool_size=2, strides=2))
 
         # Res block 1
-        rb_relu_1_1[i] = tf.nn.relu(max_pool_1[i], name="rb_relu_1_1_" + str(i))
-        rb_conv_1_1[i] = tf.layers.conv2d(rb_relu_1_1[i], kernel_size=3, filters=32, strides=2, padding="same",
+        rb_relu_1_1.append(tf.nn.relu(max_pool_1[i], name="rb_relu_1_1_" + str(i)))
+        rb_conv_1_1.append(tf.layers.conv2d(rb_relu_1_1[i], kernel_size=3, filters=32, strides=2, padding="same",
                                        kernel_initializer=tf.keras.initializers.he_normal(),
                                        kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-4),
-                                       name="rb_conv_1_1_" + str(i))
+                                       name="rb_conv_1_1_" + str(i)))
 
-        rb_relu_1_2[i] = tf.nn.relu(rb_conv_1_1[i], name="rb_relu_1_2_" + str(i))
-        rb_conv_1_2[i] = tf.layers.conv2d(rb_relu_1_2[i], kernel_size=3, filters=32, padding="same",
+        rb_relu_1_2.append(tf.nn.relu(rb_conv_1_1[i], name="rb_relu_1_2_" + str(i)))
+        rb_conv_1_2.append(tf.layers.conv2d(rb_relu_1_2[i], kernel_size=3, filters=32, padding="same",
                                        kernel_initializer=tf.keras.initializers.he_normal(),
                                        kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-4),
-                                       name="rb_conv_1_2_" + str(i))
+                                       name="rb_conv_1_2_" + str(i)))
 
-        rb_conv_1_3[i] = tf.layers.conv2d(rb_conv_1_2[i], kernel_size=1, filters=32, strides=2, padding="same",
-                                       name="rb_conv_1_3_" + str(i))
+        rb_conv_1_3.append(tf.layers.conv2d(rb_conv_1_2[i], kernel_size=1, filters=32, strides=2, padding="same",
+                                       name="rb_conv_1_3_" + str(i)))
 
-        rb_out_1[i] = tf.add(rb_conv_1_2[i], rb_conv_1_3[i], name="rb_out_1_" + str(i))
+        rb_out_1.append(tf.add(rb_conv_1_2[i], rb_conv_1_3[i], name="rb_out_1_" + str(i)))
 
         # flatten
-        flat[i] = tf.layers.flatten(rb_out_1[i])
-        flat_relu[i] = tf.nn.relu(flat[i], name="flat_relu_out_" + str(i))
-        flat_dropout[i] = tf.layers.dropout(flat_relu[i], name="flat_dropout_out_" + str(i))
+        flat.append(tf.layers.flatten(rb_out_1[i]))
+        flat_relu.append(tf.nn.relu(flat[i], name="flat_relu_out_" + str(i)))
+        flat_dropout.append(tf.layers.dropout(flat_relu[i], name="flat_dropout_out_" + str(i)))
 
         # FC_1 - predicting steering angle
         # fc_1_steer = tf.layers.dense(inputs=flat_dropout, units=1, name="fc_layer_out")
