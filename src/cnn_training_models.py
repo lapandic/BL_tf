@@ -461,7 +461,7 @@ def model_bs_3_fs_1_rbs(x):
                                             kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-4),
                                             name="rb_conv_1_2_" + str(i)))
 
-        rb_conv_1_3.append(tf.layers.conv2d(rb_conv_1_2[i], kernel_size=1, filters=32, strides=2, padding="same",
+        rb_conv_1_3.append(tf.layers.conv2d(max_pool_1[i], kernel_size=1, filters=32, strides=2, padding="same",
                                             name="rb_conv_1_3_" + str(i)))
 
         rb_out_1.append(tf.add(rb_conv_1_2[i], rb_conv_1_3[i], name="rb_out_1_" + str(i)))
