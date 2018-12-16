@@ -23,10 +23,10 @@ def get_model(history,steps_ahead,arch_num):
 
     if steps_ahead == 1 and history <= 3:
         if (history > 1 and arch_num < 2) or (history == 1 and arch_num < 6):
-            model = fs_1[history][arch_num]
+            model = fs_1[history-1][arch_num]
     elif steps_ahead == 5:
         if history < 4 and arch_num < 2:
-            model = fs_5[history][arch_num]
+            model = fs_5[history-1][arch_num]
     else:
         print("Requested model not implemented!")
 
@@ -69,7 +69,7 @@ def model_bs_1_fs_5_d3(x):
 
     :return: output layer
     '''
-
+    print("model_bs_1_fs_5_d3 loaded")
     with tf.variable_scope('ConvNet', reuse=tf.AUTO_REUSE):
         # define the 4-d tensor expected by TensorFlow
         # [-1: arbitrary num of images, img_height, img_width, num_channels]
@@ -643,7 +643,7 @@ def model1_h1_d1_n1(x):
 
     :return: output layer
     '''
-
+    print("model1_h1_d1_n1 loaded")
     with tf.variable_scope('ConvNet', reuse=tf.AUTO_REUSE):
         # define the 4-d tensor expected by TensorFlow
         # [-1: arbitrary num of images, img_height, img_width, num_channels]
