@@ -166,7 +166,7 @@ class CNN_training:
             self.loss_train = self.loss_function(training=True)
             self.loss_test = self.loss_function(training=False)
         else:
-            if self.arch_num > 9:
+            if self.arch_num == 3:
                 self.vel_pred = self.model(self.x,training=False)
             else:
                 self.vel_pred = self.model(self.x)
