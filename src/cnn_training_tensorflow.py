@@ -5,8 +5,8 @@ import os
 import argparse
 from cnn_training_functions import *
 
-#os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"
-#os.environ["CUDA_VISIBLE_DEVICES"]="0"
+os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"
+os.environ["CUDA_VISIBLE_DEVICES"]="0"
 
 def main(arch_num,history,depth,lr,epochs_n,use_batch_normalization,steps_ahead):
 
