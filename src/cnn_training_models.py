@@ -181,35 +181,35 @@ def model_bs_2_fs_5_d2(x):
         # [-1: arbitrary num of images, img_height, img_width, num_channels]
         x_img = tf.reshape(x, [-1, 48 * history, 96, 3])
 
-    x_array = tf.split(x_img, num_or_size_splits=history, axis=1)
+        x_array = tf.split(x_img, num_or_size_splits=history, axis=1)
 
-    hl_conv_1 = []
-    max_pool_1 = []
-    hl_conv_2 = []
-    max_pool_2 = []
-    conv_flat = []
+        hl_conv_1 = []
+        max_pool_1 = []
+        hl_conv_2 = []
+        max_pool_2 = []
+        conv_flat = []
 
-    for i in range(len(x_array)):
-        # define 1st convolutional layer
-        hl_conv_1.append(tf.layers.conv2d(x_array[i], kernel_size=5, filters=2, padding="valid",
-                                          activation=tf.nn.relu, name="conv_layer_1_" + str(i)))
+        for i in range(len(x_array)):
+            # define 1st convolutional layer
+            hl_conv_1.append(tf.layers.conv2d(x_array[i], kernel_size=5, filters=2, padding="valid",
+                                              activation=tf.nn.relu, name="conv_layer_1_" + str(i)))
 
-        max_pool_1.append(tf.layers.max_pooling2d(hl_conv_1[i], pool_size=2, strides=2))
+            max_pool_1.append(tf.layers.max_pooling2d(hl_conv_1[i], pool_size=2, strides=2))
 
-        # f2
-        hl_conv_2.append(tf.layers.conv2d(max_pool_1[i], kernel_size=5, filters=8, padding="valid",
-                                          activation=tf.nn.relu, name="conv_layer_2_" + str(i)))
+            # f2
+            hl_conv_2.append(tf.layers.conv2d(max_pool_1[i], kernel_size=5, filters=8, padding="valid",
+                                              activation=tf.nn.relu, name="conv_layer_2_" + str(i)))
 
-        max_pool_2.append(tf.layers.max_pooling2d(hl_conv_2[i], pool_size=2, strides=2))
+            max_pool_2.append(tf.layers.max_pooling2d(hl_conv_2[i], pool_size=2, strides=2))
 
-        # flatten tensor to connect it with the fully connected layers
-        conv_flat.append(tf.layers.flatten(max_pool_2[i]))
+            # flatten tensor to connect it with the fully connected layers
+            conv_flat.append(tf.layers.flatten(max_pool_2[i]))
 
-    commands_stack = tf.concat(conv_flat, axis=1)
+        commands_stack = tf.concat(conv_flat, axis=1)
 
-    fc = tf.layers.dense(inputs=commands_stack, units=5, name="fc_layer_out")
+        fc = tf.layers.dense(inputs=commands_stack, units=5, name="fc_layer_out")
 
-    return fc
+        return fc
 
 def model_bs_3_fs_5_d2(x):
     history = 3
@@ -218,35 +218,35 @@ def model_bs_3_fs_5_d2(x):
         # [-1: arbitrary num of images, img_height, img_width, num_channels]
         x_img = tf.reshape(x, [-1, 48 * history, 96, 3])
 
-    x_array = tf.split(x_img, num_or_size_splits=history, axis=1)
+        x_array = tf.split(x_img, num_or_size_splits=history, axis=1)
 
-    hl_conv_1 = []
-    max_pool_1 = []
-    hl_conv_2 = []
-    max_pool_2 = []
-    conv_flat = []
+        hl_conv_1 = []
+        max_pool_1 = []
+        hl_conv_2 = []
+        max_pool_2 = []
+        conv_flat = []
 
-    for i in range(len(x_array)):
-        # define 1st convolutional layer
-        hl_conv_1.append(tf.layers.conv2d(x_array[i], kernel_size=5, filters=2, padding="valid",
-                                          activation=tf.nn.relu, name="conv_layer_1_" + str(i)))
+        for i in range(len(x_array)):
+            # define 1st convolutional layer
+            hl_conv_1.append(tf.layers.conv2d(x_array[i], kernel_size=5, filters=2, padding="valid",
+                                              activation=tf.nn.relu, name="conv_layer_1_" + str(i)))
 
-        max_pool_1.append(tf.layers.max_pooling2d(hl_conv_1[i], pool_size=2, strides=2))
+            max_pool_1.append(tf.layers.max_pooling2d(hl_conv_1[i], pool_size=2, strides=2))
 
-        # f2
-        hl_conv_2.append(tf.layers.conv2d(max_pool_1[i], kernel_size=5, filters=8, padding="valid",
-                                          activation=tf.nn.relu, name="conv_layer_2_" + str(i)))
+            # f2
+            hl_conv_2.append(tf.layers.conv2d(max_pool_1[i], kernel_size=5, filters=8, padding="valid",
+                                              activation=tf.nn.relu, name="conv_layer_2_" + str(i)))
 
-        max_pool_2.append(tf.layers.max_pooling2d(hl_conv_2[i], pool_size=2, strides=2))
+            max_pool_2.append(tf.layers.max_pooling2d(hl_conv_2[i], pool_size=2, strides=2))
 
-        # flatten tensor to connect it with the fully connected layers
-        conv_flat.append(tf.layers.flatten(max_pool_2[i]))
+            # flatten tensor to connect it with the fully connected layers
+            conv_flat.append(tf.layers.flatten(max_pool_2[i]))
 
-    commands_stack = tf.concat(conv_flat, axis=1)
+        commands_stack = tf.concat(conv_flat, axis=1)
 
-    fc = tf.layers.dense(inputs=commands_stack, units=5, name="fc_layer_out")
+        fc = tf.layers.dense(inputs=commands_stack, units=5, name="fc_layer_out")
 
-    return fc
+        return fc
 
 def model_bs_4_fs_5_d2(x):
     history = 4
@@ -255,35 +255,35 @@ def model_bs_4_fs_5_d2(x):
         # [-1: arbitrary num of images, img_height, img_width, num_channels]
         x_img = tf.reshape(x, [-1, 48 * history, 96, 3])
 
-    x_array = tf.split(x_img, num_or_size_splits=history, axis=1)
+        x_array = tf.split(x_img, num_or_size_splits=history, axis=1)
 
-    hl_conv_1 = []
-    max_pool_1 = []
-    hl_conv_2 = []
-    max_pool_2 = []
-    conv_flat = []
+        hl_conv_1 = []
+        max_pool_1 = []
+        hl_conv_2 = []
+        max_pool_2 = []
+        conv_flat = []
 
-    for i in range(len(x_array)):
-        # define 1st convolutional layer
-        hl_conv_1.append(tf.layers.conv2d(x_array[i], kernel_size=5, filters=2, padding="valid",
-                                          activation=tf.nn.relu, name="conv_layer_1_" + str(i)))
+        for i in range(len(x_array)):
+            # define 1st convolutional layer
+            hl_conv_1.append(tf.layers.conv2d(x_array[i], kernel_size=5, filters=2, padding="valid",
+                                              activation=tf.nn.relu, name="conv_layer_1_" + str(i)))
 
-        max_pool_1.append(tf.layers.max_pooling2d(hl_conv_1[i], pool_size=2, strides=2))
+            max_pool_1.append(tf.layers.max_pooling2d(hl_conv_1[i], pool_size=2, strides=2))
 
-        # f2
-        hl_conv_2.append(tf.layers.conv2d(max_pool_1[i], kernel_size=5, filters=8, padding="valid",
-                                          activation=tf.nn.relu, name="conv_layer_2_" + str(i)))
+            # f2
+            hl_conv_2.append(tf.layers.conv2d(max_pool_1[i], kernel_size=5, filters=8, padding="valid",
+                                              activation=tf.nn.relu, name="conv_layer_2_" + str(i)))
 
-        max_pool_2.append(tf.layers.max_pooling2d(hl_conv_2[i], pool_size=2, strides=2))
+            max_pool_2.append(tf.layers.max_pooling2d(hl_conv_2[i], pool_size=2, strides=2))
 
-        # flatten tensor to connect it with the fully connected layers
-        conv_flat.append(tf.layers.flatten(max_pool_2[i]))
+            # flatten tensor to connect it with the fully connected layers
+            conv_flat.append(tf.layers.flatten(max_pool_2[i]))
 
-    commands_stack = tf.concat(conv_flat, axis=1)
+        commands_stack = tf.concat(conv_flat, axis=1)
 
-    fc = tf.layers.dense(inputs=commands_stack, units=5, name="fc_layer_out")
+        fc = tf.layers.dense(inputs=commands_stack, units=5, name="fc_layer_out")
 
-    return fc
+        return fc
 
 def model_bs_2_fs_5_d3(x):
     history = 2
@@ -292,43 +292,43 @@ def model_bs_2_fs_5_d3(x):
         # [-1: arbitrary num of images, img_height, img_width, num_channels]
         x_img = tf.reshape(x, [-1, 48 * history, 96, 3])
 
-    x_array = tf.split(x_img, num_or_size_splits=history, axis=1)
+        x_array = tf.split(x_img, num_or_size_splits=history, axis=1)
 
-    hl_conv_1 = []
-    max_pool_1 = []
-    hl_conv_2 = []
-    max_pool_2 = []
-    hl_conv_3 = []
-    max_pool_3 = []
-    conv_flat = []
+        hl_conv_1 = []
+        max_pool_1 = []
+        hl_conv_2 = []
+        max_pool_2 = []
+        hl_conv_3 = []
+        max_pool_3 = []
+        conv_flat = []
 
-    for i in range(len(x_array)):
-        # define 1st convolutional layer
-        hl_conv_1.append(tf.layers.conv2d(x_array[i], kernel_size=5, filters=2, padding="valid",
-                                          activation=tf.nn.relu, name="conv_layer_1_" + str(i)))
+        for i in range(len(x_array)):
+            # define 1st convolutional layer
+            hl_conv_1.append(tf.layers.conv2d(x_array[i], kernel_size=5, filters=2, padding="valid",
+                                              activation=tf.nn.relu, name="conv_layer_1_" + str(i)))
 
-        max_pool_1.append(tf.layers.max_pooling2d(hl_conv_1[i], pool_size=2, strides=2))
+            max_pool_1.append(tf.layers.max_pooling2d(hl_conv_1[i], pool_size=2, strides=2))
 
-        # f2
-        hl_conv_2.append(tf.layers.conv2d(max_pool_1[i], kernel_size=5, filters=8, padding="valid",
-                                          activation=tf.nn.relu, name="conv_layer_2_" + str(i)))
+            # f2
+            hl_conv_2.append(tf.layers.conv2d(max_pool_1[i], kernel_size=5, filters=8, padding="valid",
+                                              activation=tf.nn.relu, name="conv_layer_2_" + str(i)))
 
-        max_pool_2.append(tf.layers.max_pooling2d(hl_conv_2[i], pool_size=2, strides=2))
+            max_pool_2.append(tf.layers.max_pooling2d(hl_conv_2[i], pool_size=2, strides=2))
 
-        # f3
-        hl_conv_3.append(tf.layers.conv2d(max_pool_2[i], kernel_size=5, filters=8, padding="valid",
-                                          activation=tf.nn.relu, name="conv_layer_3_" + str(i)))
+            # f3
+            hl_conv_3.append(tf.layers.conv2d(max_pool_2[i], kernel_size=5, filters=8, padding="valid",
+                                              activation=tf.nn.relu, name="conv_layer_3_" + str(i)))
 
-        max_pool_3.append(tf.layers.max_pooling2d(hl_conv_3[i], pool_size=2, strides=2))
+            max_pool_3.append(tf.layers.max_pooling2d(hl_conv_3[i], pool_size=2, strides=2))
 
-        # flatten tensor to connect it with the fully connected layers
-        conv_flat.append(tf.layers.flatten(max_pool_3[i]))
+            # flatten tensor to connect it with the fully connected layers
+            conv_flat.append(tf.layers.flatten(max_pool_3[i]))
 
-    commands_stack = tf.concat(conv_flat, axis=1)
+        commands_stack = tf.concat(conv_flat, axis=1)
 
-    fc = tf.layers.dense(inputs=commands_stack, units=5, name="fc_layer_out")
+        fc = tf.layers.dense(inputs=commands_stack, units=5, name="fc_layer_out")
 
-    return fc
+        return fc
 
 def model_bs_2_fs_5_d4(x):
     history = 2
@@ -337,45 +337,45 @@ def model_bs_2_fs_5_d4(x):
         # [-1: arbitrary num of images, img_height, img_width, num_channels]
         x_img = tf.reshape(x, [-1, 48 * history, 96, 3])
 
-    x_array = tf.split(x_img, num_or_size_splits=history, axis=1)
+        x_array = tf.split(x_img, num_or_size_splits=history, axis=1)
 
-    hl_conv_1 = []
-    max_pool_1 = []
-    hl_conv_2 = []
-    max_pool_2 = []
-    hl_conv_3 = []
-    max_pool_3 = []
-    conv_flat = []
+        hl_conv_1 = []
+        max_pool_1 = []
+        hl_conv_2 = []
+        max_pool_2 = []
+        hl_conv_3 = []
+        max_pool_3 = []
+        conv_flat = []
 
-    for i in range(len(x_array)):
-        # define 1st convolutional layer
-        hl_conv_1.append(tf.layers.conv2d(x_array[i], kernel_size=5, filters=2, padding="valid",
-                                          activation=tf.nn.relu, name="conv_layer_1_" + str(i)))
+        for i in range(len(x_array)):
+            # define 1st convolutional layer
+            hl_conv_1.append(tf.layers.conv2d(x_array[i], kernel_size=5, filters=2, padding="valid",
+                                              activation=tf.nn.relu, name="conv_layer_1_" + str(i)))
 
-        max_pool_1.append(tf.layers.max_pooling2d(hl_conv_1[i], pool_size=2, strides=2))
+            max_pool_1.append(tf.layers.max_pooling2d(hl_conv_1[i], pool_size=2, strides=2))
 
-        # f2
-        hl_conv_2.append(tf.layers.conv2d(max_pool_1[i], kernel_size=5, filters=8, padding="valid",
-                                          activation=tf.nn.relu, name="conv_layer_2_" + str(i)))
+            # f2
+            hl_conv_2.append(tf.layers.conv2d(max_pool_1[i], kernel_size=5, filters=8, padding="valid",
+                                              activation=tf.nn.relu, name="conv_layer_2_" + str(i)))
 
-        max_pool_2.append(tf.layers.max_pooling2d(hl_conv_2[i], pool_size=2, strides=2))
+            max_pool_2.append(tf.layers.max_pooling2d(hl_conv_2[i], pool_size=2, strides=2))
 
-        # f3
-        hl_conv_3.append(tf.layers.conv2d(max_pool_2[i], kernel_size=5, filters=8, padding="valid",
-                                          activation=tf.nn.relu, name="conv_layer_3_" + str(i)))
+            # f3
+            hl_conv_3.append(tf.layers.conv2d(max_pool_2[i], kernel_size=5, filters=8, padding="valid",
+                                              activation=tf.nn.relu, name="conv_layer_3_" + str(i)))
 
-        max_pool_3.append(tf.layers.max_pooling2d(hl_conv_3[i], pool_size=2, strides=2))
+            max_pool_3.append(tf.layers.max_pooling2d(hl_conv_3[i], pool_size=2, strides=2))
 
-        # flatten tensor to connect it with the fully connected layers
-        conv_flat.append(tf.layers.flatten(max_pool_3[i]))
+            # flatten tensor to connect it with the fully connected layers
+            conv_flat.append(tf.layers.flatten(max_pool_3[i]))
 
-    commands_stack = tf.concat(conv_flat, axis=1)
+        commands_stack = tf.concat(conv_flat, axis=1)
 
-    fc_1 = tf.layers.dense(inputs=commands_stack, units=64, activation=tf.nn.relu, name="fc_layer_1")
+        fc_1 = tf.layers.dense(inputs=commands_stack, units=64, activation=tf.nn.relu, name="fc_layer_1")
 
-    fc_out = tf.layers.dense(inputs=fc_1, units=5, name="fc_layer_out")
+        fc_out = tf.layers.dense(inputs=fc_1, units=5, name="fc_layer_out")
 
-    return fc_out
+        return fc_out
 
 def model_bs_3_fs_5_d3(x):
     history = 3
@@ -384,43 +384,43 @@ def model_bs_3_fs_5_d3(x):
         # [-1: arbitrary num of images, img_height, img_width, num_channels]
         x_img = tf.reshape(x, [-1, 48 * history, 96, 3])
 
-    x_array = tf.split(x_img, num_or_size_splits=history, axis=1)
+        x_array = tf.split(x_img, num_or_size_splits=history, axis=1)
 
-    hl_conv_1 = []
-    max_pool_1 = []
-    hl_conv_2 = []
-    max_pool_2 = []
-    hl_conv_3 = []
-    max_pool_3 = []
-    conv_flat = []
+        hl_conv_1 = []
+        max_pool_1 = []
+        hl_conv_2 = []
+        max_pool_2 = []
+        hl_conv_3 = []
+        max_pool_3 = []
+        conv_flat = []
 
-    for i in range(len(x_array)):
-        # define 1st convolutional layer
-        hl_conv_1.append(tf.layers.conv2d(x_array[i], kernel_size=5, filters=2, padding="valid",
-                                          activation=tf.nn.relu, name="conv_layer_1_" + str(i)))
+        for i in range(len(x_array)):
+            # define 1st convolutional layer
+            hl_conv_1.append(tf.layers.conv2d(x_array[i], kernel_size=5, filters=2, padding="valid",
+                                              activation=tf.nn.relu, name="conv_layer_1_" + str(i)))
 
-        max_pool_1.append(tf.layers.max_pooling2d(hl_conv_1[i], pool_size=2, strides=2))
+            max_pool_1.append(tf.layers.max_pooling2d(hl_conv_1[i], pool_size=2, strides=2))
 
-        # f2
-        hl_conv_2.append(tf.layers.conv2d(max_pool_1[i], kernel_size=5, filters=8, padding="valid",
-                                          activation=tf.nn.relu, name="conv_layer_2_" + str(i)))
+            # f2
+            hl_conv_2.append(tf.layers.conv2d(max_pool_1[i], kernel_size=5, filters=8, padding="valid",
+                                              activation=tf.nn.relu, name="conv_layer_2_" + str(i)))
 
-        max_pool_2.append(tf.layers.max_pooling2d(hl_conv_2[i], pool_size=2, strides=2))
+            max_pool_2.append(tf.layers.max_pooling2d(hl_conv_2[i], pool_size=2, strides=2))
 
-        # f3
-        hl_conv_3.append(tf.layers.conv2d(max_pool_2[i], kernel_size=5, filters=8, padding="valid",
-                                          activation=tf.nn.relu, name="conv_layer_3_" + str(i)))
+            # f3
+            hl_conv_3.append(tf.layers.conv2d(max_pool_2[i], kernel_size=5, filters=8, padding="valid",
+                                              activation=tf.nn.relu, name="conv_layer_3_" + str(i)))
 
-        max_pool_3.append(tf.layers.max_pooling2d(hl_conv_3[i], pool_size=2, strides=2))
+            max_pool_3.append(tf.layers.max_pooling2d(hl_conv_3[i], pool_size=2, strides=2))
 
-        # flatten tensor to connect it with the fully connected layers
-        conv_flat.append(tf.layers.flatten(max_pool_3[i]))
+            # flatten tensor to connect it with the fully connected layers
+            conv_flat.append(tf.layers.flatten(max_pool_3[i]))
 
-    commands_stack = tf.concat(conv_flat, axis=1)
+        commands_stack = tf.concat(conv_flat, axis=1)
 
-    fc = tf.layers.dense(inputs=commands_stack, units=5, name="fc_layer_out")
+        fc = tf.layers.dense(inputs=commands_stack, units=5, name="fc_layer_out")
 
-    return fc
+        return fc
 
 def model_bs_3_fs_5_d4(x):
     history = 3
@@ -429,45 +429,45 @@ def model_bs_3_fs_5_d4(x):
         # [-1: arbitrary num of images, img_height, img_width, num_channels]
         x_img = tf.reshape(x, [-1, 48 * history, 96, 3])
 
-    x_array = tf.split(x_img, num_or_size_splits=history, axis=1)
+        x_array = tf.split(x_img, num_or_size_splits=history, axis=1)
 
-    hl_conv_1 = []
-    max_pool_1 = []
-    hl_conv_2 = []
-    max_pool_2 = []
-    hl_conv_3 = []
-    max_pool_3 = []
-    conv_flat = []
+        hl_conv_1 = []
+        max_pool_1 = []
+        hl_conv_2 = []
+        max_pool_2 = []
+        hl_conv_3 = []
+        max_pool_3 = []
+        conv_flat = []
 
-    for i in range(len(x_array)):
-        # define 1st convolutional layer
-        hl_conv_1.append(tf.layers.conv2d(x_array[i], kernel_size=5, filters=2, padding="valid",
-                                          activation=tf.nn.relu, name="conv_layer_1_" + str(i)))
+        for i in range(len(x_array)):
+            # define 1st convolutional layer
+            hl_conv_1.append(tf.layers.conv2d(x_array[i], kernel_size=5, filters=2, padding="valid",
+                                              activation=tf.nn.relu, name="conv_layer_1_" + str(i)))
 
-        max_pool_1.append(tf.layers.max_pooling2d(hl_conv_1[i], pool_size=2, strides=2))
+            max_pool_1.append(tf.layers.max_pooling2d(hl_conv_1[i], pool_size=2, strides=2))
 
-        # f2
-        hl_conv_2.append(tf.layers.conv2d(max_pool_1[i], kernel_size=5, filters=8, padding="valid",
-                                          activation=tf.nn.relu, name="conv_layer_2_" + str(i)))
+            # f2
+            hl_conv_2.append(tf.layers.conv2d(max_pool_1[i], kernel_size=5, filters=8, padding="valid",
+                                              activation=tf.nn.relu, name="conv_layer_2_" + str(i)))
 
-        max_pool_2.append(tf.layers.max_pooling2d(hl_conv_2[i], pool_size=2, strides=2))
+            max_pool_2.append(tf.layers.max_pooling2d(hl_conv_2[i], pool_size=2, strides=2))
 
-        # f3
-        hl_conv_3.append(tf.layers.conv2d(max_pool_2[i], kernel_size=5, filters=8, padding="valid",
-                                          activation=tf.nn.relu, name="conv_layer_3_" + str(i)))
+            # f3
+            hl_conv_3.append(tf.layers.conv2d(max_pool_2[i], kernel_size=5, filters=8, padding="valid",
+                                              activation=tf.nn.relu, name="conv_layer_3_" + str(i)))
 
-        max_pool_3.append(tf.layers.max_pooling2d(hl_conv_3[i], pool_size=2, strides=2))
+            max_pool_3.append(tf.layers.max_pooling2d(hl_conv_3[i], pool_size=2, strides=2))
 
-        # flatten tensor to connect it with the fully connected layers
-        conv_flat.append(tf.layers.flatten(max_pool_3[i]))
+            # flatten tensor to connect it with the fully connected layers
+            conv_flat.append(tf.layers.flatten(max_pool_3[i]))
 
-    commands_stack = tf.concat(conv_flat, axis=1)
+        commands_stack = tf.concat(conv_flat, axis=1)
 
-    fc_1 = tf.layers.dense(inputs=commands_stack, units=64, activation=tf.nn.relu, name="fc_layer_1")
+        fc_1 = tf.layers.dense(inputs=commands_stack, units=64, activation=tf.nn.relu, name="fc_layer_1")
 
-    fc_out = tf.layers.dense(inputs=fc_1, units=5, name="fc_layer_out")
+        fc_out = tf.layers.dense(inputs=fc_1, units=5, name="fc_layer_out")
 
-    return fc_out
+        return fc_out
 
 def model_bs_4_fs_5_d3(x):
     history = 4
@@ -476,43 +476,43 @@ def model_bs_4_fs_5_d3(x):
         # [-1: arbitrary num of images, img_height, img_width, num_channels]
         x_img = tf.reshape(x, [-1, 48 * history, 96, 3])
 
-    x_array = tf.split(x_img, num_or_size_splits=history, axis=1)
+        x_array = tf.split(x_img, num_or_size_splits=history, axis=1)
 
-    hl_conv_1 = []
-    max_pool_1 = []
-    hl_conv_2 = []
-    max_pool_2 = []
-    hl_conv_3 = []
-    max_pool_3 = []
-    conv_flat = []
+        hl_conv_1 = []
+        max_pool_1 = []
+        hl_conv_2 = []
+        max_pool_2 = []
+        hl_conv_3 = []
+        max_pool_3 = []
+        conv_flat = []
 
-    for i in range(len(x_array)):
-        # define 1st convolutional layer
-        hl_conv_1.append(tf.layers.conv2d(x_array[i], kernel_size=5, filters=2, padding="valid",
-                                          activation=tf.nn.relu, name="conv_layer_1_" + str(i)))
+        for i in range(len(x_array)):
+            # define 1st convolutional layer
+            hl_conv_1.append(tf.layers.conv2d(x_array[i], kernel_size=5, filters=2, padding="valid",
+                                              activation=tf.nn.relu, name="conv_layer_1_" + str(i)))
 
-        max_pool_1.append(tf.layers.max_pooling2d(hl_conv_1[i], pool_size=2, strides=2))
+            max_pool_1.append(tf.layers.max_pooling2d(hl_conv_1[i], pool_size=2, strides=2))
 
-        # f2
-        hl_conv_2.append(tf.layers.conv2d(max_pool_1[i], kernel_size=5, filters=8, padding="valid",
-                                          activation=tf.nn.relu, name="conv_layer_2_" + str(i)))
+            # f2
+            hl_conv_2.append(tf.layers.conv2d(max_pool_1[i], kernel_size=5, filters=8, padding="valid",
+                                              activation=tf.nn.relu, name="conv_layer_2_" + str(i)))
 
-        max_pool_2.append(tf.layers.max_pooling2d(hl_conv_2[i], pool_size=2, strides=2))
+            max_pool_2.append(tf.layers.max_pooling2d(hl_conv_2[i], pool_size=2, strides=2))
 
-        # f3
-        hl_conv_3.append(tf.layers.conv2d(max_pool_2[i], kernel_size=5, filters=8, padding="valid",
-                                          activation=tf.nn.relu, name="conv_layer_3_" + str(i)))
+            # f3
+            hl_conv_3.append(tf.layers.conv2d(max_pool_2[i], kernel_size=5, filters=8, padding="valid",
+                                              activation=tf.nn.relu, name="conv_layer_3_" + str(i)))
 
-        max_pool_3.append(tf.layers.max_pooling2d(hl_conv_3[i], pool_size=2, strides=2))
+            max_pool_3.append(tf.layers.max_pooling2d(hl_conv_3[i], pool_size=2, strides=2))
 
-        # flatten tensor to connect it with the fully connected layers
-        conv_flat.append(tf.layers.flatten(max_pool_3[i]))
+            # flatten tensor to connect it with the fully connected layers
+            conv_flat.append(tf.layers.flatten(max_pool_3[i]))
 
-    commands_stack = tf.concat(conv_flat, axis=1)
+        commands_stack = tf.concat(conv_flat, axis=1)
 
-    fc = tf.layers.dense(inputs=commands_stack, units=5, name="fc_layer_out")
+        fc = tf.layers.dense(inputs=commands_stack, units=5, name="fc_layer_out")
 
-    return fc
+        return fc
 
 def model_bs_4_fs_5_d4(x):
     history = 4
@@ -521,45 +521,45 @@ def model_bs_4_fs_5_d4(x):
         # [-1: arbitrary num of images, img_height, img_width, num_channels]
         x_img = tf.reshape(x, [-1, 48 * history, 96, 3])
 
-    x_array = tf.split(x_img, num_or_size_splits=history, axis=1)
+        x_array = tf.split(x_img, num_or_size_splits=history, axis=1)
 
-    hl_conv_1 = []
-    max_pool_1 = []
-    hl_conv_2 = []
-    max_pool_2 = []
-    hl_conv_3 = []
-    max_pool_3 = []
-    conv_flat = []
+        hl_conv_1 = []
+        max_pool_1 = []
+        hl_conv_2 = []
+        max_pool_2 = []
+        hl_conv_3 = []
+        max_pool_3 = []
+        conv_flat = []
 
-    for i in range(len(x_array)):
-        # define 1st convolutional layer
-        hl_conv_1.append(tf.layers.conv2d(x_array[i], kernel_size=5, filters=2, padding="valid",
-                                          activation=tf.nn.relu, name="conv_layer_1_" + str(i)))
+        for i in range(len(x_array)):
+            # define 1st convolutional layer
+            hl_conv_1.append(tf.layers.conv2d(x_array[i], kernel_size=5, filters=2, padding="valid",
+                                              activation=tf.nn.relu, name="conv_layer_1_" + str(i)))
 
-        max_pool_1.append(tf.layers.max_pooling2d(hl_conv_1[i], pool_size=2, strides=2))
+            max_pool_1.append(tf.layers.max_pooling2d(hl_conv_1[i], pool_size=2, strides=2))
 
-        # f2
-        hl_conv_2.append(tf.layers.conv2d(max_pool_1[i], kernel_size=5, filters=8, padding="valid",
-                                          activation=tf.nn.relu, name="conv_layer_2_" + str(i)))
+            # f2
+            hl_conv_2.append(tf.layers.conv2d(max_pool_1[i], kernel_size=5, filters=8, padding="valid",
+                                              activation=tf.nn.relu, name="conv_layer_2_" + str(i)))
 
-        max_pool_2.append(tf.layers.max_pooling2d(hl_conv_2[i], pool_size=2, strides=2))
+            max_pool_2.append(tf.layers.max_pooling2d(hl_conv_2[i], pool_size=2, strides=2))
 
-        # f3
-        hl_conv_3.append(tf.layers.conv2d(max_pool_2[i], kernel_size=5, filters=8, padding="valid",
-                                          activation=tf.nn.relu, name="conv_layer_3_" + str(i)))
+            # f3
+            hl_conv_3.append(tf.layers.conv2d(max_pool_2[i], kernel_size=5, filters=8, padding="valid",
+                                              activation=tf.nn.relu, name="conv_layer_3_" + str(i)))
 
-        max_pool_3.append(tf.layers.max_pooling2d(hl_conv_3[i], pool_size=2, strides=2))
+            max_pool_3.append(tf.layers.max_pooling2d(hl_conv_3[i], pool_size=2, strides=2))
 
-        # flatten tensor to connect it with the fully connected layers
-        conv_flat.append(tf.layers.flatten(max_pool_3[i]))
+            # flatten tensor to connect it with the fully connected layers
+            conv_flat.append(tf.layers.flatten(max_pool_3[i]))
 
-    commands_stack = tf.concat(conv_flat, axis=1)
+        commands_stack = tf.concat(conv_flat, axis=1)
 
-    fc_1 = tf.layers.dense(inputs=commands_stack, units=64, activation=tf.nn.relu, name="fc_layer_1")
+        fc_1 = tf.layers.dense(inputs=commands_stack, units=64, activation=tf.nn.relu, name="fc_layer_1")
 
-    fc_out = tf.layers.dense(inputs=fc_1, units=5, name="fc_layer_out")
+        fc_out = tf.layers.dense(inputs=fc_1, units=5, name="fc_layer_out")
 
-    return fc_out
+        return fc_out
 
 def model_bs_3_fs_1_rbs(x):
     history = 3
@@ -568,62 +568,62 @@ def model_bs_3_fs_1_rbs(x):
         # [-1: arbitrary num of images, img_height, img_width, num_channels]
         x_img = tf.reshape(x, [-1, 48 * history, 96, 3])
 
-    x_array = tf.split(x_img, num_or_size_splits=history, axis=1)
+        x_array = tf.split(x_img, num_or_size_splits=history, axis=1)
 
-    hl_conv_1 = []
-    max_pool_1 = []
-    rb_relu_1_1 = []
-    rb_conv_1_1 = []
+        hl_conv_1 = []
+        max_pool_1 = []
+        rb_relu_1_1 = []
+        rb_conv_1_1 = []
 
-    rb_relu_1_2 = []
-    rb_conv_1_2 = []
+        rb_relu_1_2 = []
+        rb_conv_1_2 = []
 
-    rb_conv_1_3 = []
-    rb_out_1 = []
-    flat = []
-    flat_relu = []
-    flat_dropout = []
+        rb_conv_1_3 = []
+        rb_out_1 = []
+        flat = []
+        flat_relu = []
+        flat_dropout = []
 
 
-    for i in range(len(x_array)):
-        # first f block NOTE: using linear activation instead of ReLU. NOTE: number of filters!
-        hl_conv_1.append(tf.layers.conv2d(x_img, kernel_size=5, filters=32, padding="same",
-                                     activation=None, name="conv_layer_1_" + str(i)))
+        for i in range(len(x_array)):
+            # first f block NOTE: using linear activation instead of ReLU. NOTE: number of filters!
+            hl_conv_1.append(tf.layers.conv2d(x_img, kernel_size=5, filters=32, padding="same",
+                                         activation=None, name="conv_layer_1_" + str(i)))
 
-        # NOTE: using pool_size=2 instead of pool_size=3, reason input images in DroNet paper are 200x200x1, we use 48x96x3
-        max_pool_1.append(tf.layers.max_pooling2d(hl_conv_1[i], pool_size=2, strides=2))
+            # NOTE: using pool_size=2 instead of pool_size=3, reason input images in DroNet paper are 200x200x1, we use 48x96x3
+            max_pool_1.append(tf.layers.max_pooling2d(hl_conv_1[i], pool_size=2, strides=2))
 
-        # Res block 1
-        rb_relu_1_1.append(tf.nn.relu(max_pool_1[i], name="rb_relu_1_1_" + str(i)))
-        rb_conv_1_1.append(tf.layers.conv2d(rb_relu_1_1[i], kernel_size=3, filters=32, strides=2, padding="same",
-                                            kernel_initializer=tf.keras.initializers.he_normal(),
-                                            kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-4),
-                                            name="rb_conv_1_1_" + str(i)))
+            # Res block 1
+            rb_relu_1_1.append(tf.nn.relu(max_pool_1[i], name="rb_relu_1_1_" + str(i)))
+            rb_conv_1_1.append(tf.layers.conv2d(rb_relu_1_1[i], kernel_size=3, filters=32, strides=2, padding="same",
+                                                kernel_initializer=tf.keras.initializers.he_normal(),
+                                                kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-4),
+                                                name="rb_conv_1_1_" + str(i)))
 
-        rb_relu_1_2.append(tf.nn.relu(rb_conv_1_1[i], name="rb_relu_1_2_" + str(i)))
-        rb_conv_1_2.append(tf.layers.conv2d(rb_relu_1_2[i], kernel_size=3, filters=32, padding="same",
-                                            kernel_initializer=tf.keras.initializers.he_normal(),
-                                            kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-4),
-                                            name="rb_conv_1_2_" + str(i)))
+            rb_relu_1_2.append(tf.nn.relu(rb_conv_1_1[i], name="rb_relu_1_2_" + str(i)))
+            rb_conv_1_2.append(tf.layers.conv2d(rb_relu_1_2[i], kernel_size=3, filters=32, padding="same",
+                                                kernel_initializer=tf.keras.initializers.he_normal(),
+                                                kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-4),
+                                                name="rb_conv_1_2_" + str(i)))
 
-        rb_conv_1_3.append(tf.layers.conv2d(max_pool_1[i], kernel_size=1, filters=32, strides=2, padding="same",
-                                            name="rb_conv_1_3_" + str(i)))
+            rb_conv_1_3.append(tf.layers.conv2d(max_pool_1[i], kernel_size=1, filters=32, strides=2, padding="same",
+                                                name="rb_conv_1_3_" + str(i)))
 
-        rb_out_1.append(tf.add(rb_conv_1_2[i], rb_conv_1_3[i], name="rb_out_1_" + str(i)))
+            rb_out_1.append(tf.add(rb_conv_1_2[i], rb_conv_1_3[i], name="rb_out_1_" + str(i)))
 
-        # flatten
-        flat.append(tf.layers.flatten(rb_out_1[i]))
-        flat_relu.append(tf.nn.relu(flat[i], name="flat_relu_out_" + str(i)))
-        flat_dropout.append(tf.layers.dropout(flat_relu[i], name="flat_dropout_out_" + str(i)))
+            # flatten
+            flat.append(tf.layers.flatten(rb_out_1[i]))
+            flat_relu.append(tf.nn.relu(flat[i], name="flat_relu_out_" + str(i)))
+            flat_dropout.append(tf.layers.dropout(flat_relu[i], name="flat_dropout_out_" + str(i)))
 
-        # FC_1 - predicting steering angle
-        # fc_1_steer = tf.layers.dense(inputs=flat_dropout, units=1, name="fc_layer_out")
+            # FC_1 - predicting steering angle
+            # fc_1_steer = tf.layers.dense(inputs=flat_dropout, units=1, name="fc_layer_out")
 
-    commands_stack = tf.concat(flat_dropout, axis=1)
+        commands_stack = tf.concat(flat_dropout, axis=1)
 
-    fc = tf.layers.dense(inputs=commands_stack, units=1, name="fc_layer_out")
+        fc = tf.layers.dense(inputs=commands_stack, units=1, name="fc_layer_out")
 
-    return fc
+        return fc
 
 
 def model_bs_2_fs_1_rbs(x):
@@ -633,62 +633,62 @@ def model_bs_2_fs_1_rbs(x):
         # [-1: arbitrary num of images, img_height, img_width, num_channels]
         x_img = tf.reshape(x, [-1, 48 * history, 96, 3])
 
-    x_array = tf.split(x_img, num_or_size_splits=history, axis=1)
+        x_array = tf.split(x_img, num_or_size_splits=history, axis=1)
 
-    hl_conv_1 = []
-    max_pool_1 = []
-    rb_relu_1_1 = []
-    rb_conv_1_1 = []
+        hl_conv_1 = []
+        max_pool_1 = []
+        rb_relu_1_1 = []
+        rb_conv_1_1 = []
 
-    rb_relu_1_2 = []
-    rb_conv_1_2 = []
+        rb_relu_1_2 = []
+        rb_conv_1_2 = []
 
-    rb_conv_1_3 = []
-    rb_out_1 = []
-    flat = []
-    flat_relu = []
-    flat_dropout = []
+        rb_conv_1_3 = []
+        rb_out_1 = []
+        flat = []
+        flat_relu = []
+        flat_dropout = []
 
 
-    for i in range(len(x_array)):
-        # first f block NOTE: using linear activation instead of ReLU. NOTE: number of filters!
-        hl_conv_1.append(tf.layers.conv2d(x_img, kernel_size=5, filters=32, padding="same",
-                                     activation=None, name="conv_layer_1_" + str(i)))
+        for i in range(len(x_array)):
+            # first f block NOTE: using linear activation instead of ReLU. NOTE: number of filters!
+            hl_conv_1.append(tf.layers.conv2d(x_img, kernel_size=5, filters=32, padding="same",
+                                         activation=None, name="conv_layer_1_" + str(i)))
 
-        # NOTE: using pool_size=2 instead of pool_size=3, reason input images in DroNet paper are 200x200x1, we use 48x96x3
-        max_pool_1.append(tf.layers.max_pooling2d(hl_conv_1[i], pool_size=2, strides=2))
+            # NOTE: using pool_size=2 instead of pool_size=3, reason input images in DroNet paper are 200x200x1, we use 48x96x3
+            max_pool_1.append(tf.layers.max_pooling2d(hl_conv_1[i], pool_size=2, strides=2))
 
-        # Res block 1
-        rb_relu_1_1.append(tf.nn.relu(max_pool_1[i], name="rb_relu_1_1_" + str(i)))
-        rb_conv_1_1.append(tf.layers.conv2d(rb_relu_1_1[i], kernel_size=3, filters=32, strides=2, padding="same",
-                                       kernel_initializer=tf.keras.initializers.he_normal(),
-                                       kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-4),
-                                       name="rb_conv_1_1_" + str(i)))
+            # Res block 1
+            rb_relu_1_1.append(tf.nn.relu(max_pool_1[i], name="rb_relu_1_1_" + str(i)))
+            rb_conv_1_1.append(tf.layers.conv2d(rb_relu_1_1[i], kernel_size=3, filters=32, strides=2, padding="same",
+                                           kernel_initializer=tf.keras.initializers.he_normal(),
+                                           kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-4),
+                                           name="rb_conv_1_1_" + str(i)))
 
-        rb_relu_1_2.append(tf.nn.relu(rb_conv_1_1[i], name="rb_relu_1_2_" + str(i)))
-        rb_conv_1_2.append(tf.layers.conv2d(rb_relu_1_2[i], kernel_size=3, filters=32, padding="same",
-                                       kernel_initializer=tf.keras.initializers.he_normal(),
-                                       kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-4),
-                                       name="rb_conv_1_2_" + str(i)))
+            rb_relu_1_2.append(tf.nn.relu(rb_conv_1_1[i], name="rb_relu_1_2_" + str(i)))
+            rb_conv_1_2.append(tf.layers.conv2d(rb_relu_1_2[i], kernel_size=3, filters=32, padding="same",
+                                           kernel_initializer=tf.keras.initializers.he_normal(),
+                                           kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-4),
+                                           name="rb_conv_1_2_" + str(i)))
 
-        rb_conv_1_3.append(tf.layers.conv2d(max_pool_1[i], kernel_size=1, filters=32, strides=2, padding="same",
-                                       name="rb_conv_1_3_" + str(i)))
+            rb_conv_1_3.append(tf.layers.conv2d(max_pool_1[i], kernel_size=1, filters=32, strides=2, padding="same",
+                                           name="rb_conv_1_3_" + str(i)))
 
-        rb_out_1.append(tf.add(rb_conv_1_2[i], rb_conv_1_3[i], name="rb_out_1_" + str(i)))
+            rb_out_1.append(tf.add(rb_conv_1_2[i], rb_conv_1_3[i], name="rb_out_1_" + str(i)))
 
-        # flatten
-        flat.append(tf.layers.flatten(rb_out_1[i]))
-        flat_relu.append(tf.nn.relu(flat[i], name="flat_relu_out_" + str(i)))
-        flat_dropout.append(tf.layers.dropout(flat_relu[i], name="flat_dropout_out_" + str(i)))
+            # flatten
+            flat.append(tf.layers.flatten(rb_out_1[i]))
+            flat_relu.append(tf.nn.relu(flat[i], name="flat_relu_out_" + str(i)))
+            flat_dropout.append(tf.layers.dropout(flat_relu[i], name="flat_dropout_out_" + str(i)))
 
-        # FC_1 - predicting steering angle
-        # fc_1_steer = tf.layers.dense(inputs=flat_dropout, units=1, name="fc_layer_out")
+            # FC_1 - predicting steering angle
+            # fc_1_steer = tf.layers.dense(inputs=flat_dropout, units=1, name="fc_layer_out")
 
-    commands_stack = tf.concat(flat_dropout, axis=1)
+        commands_stack = tf.concat(flat_dropout, axis=1)
 
-    fc = tf.layers.dense(inputs=commands_stack, units=1, name="fc_layer_out")
+        fc = tf.layers.dense(inputs=commands_stack, units=1, name="fc_layer_out")
 
-    return fc
+        return fc
 
 def model_bs_3_fs_1_d3(x):
     history = 3
@@ -697,43 +697,43 @@ def model_bs_3_fs_1_d3(x):
         # [-1: arbitrary num of images, img_height, img_width, num_channels]
         x_img = tf.reshape(x, [-1, 48 * history, 96, 3])
 
-    x_array = tf.split(x_img, num_or_size_splits=history, axis=1)
+        x_array = tf.split(x_img, num_or_size_splits=history, axis=1)
 
-    hl_conv_1 = []
-    max_pool_1 = []
-    hl_conv_2 = []
-    max_pool_2 = []
-    hl_conv_3 = []
-    max_pool_3 = []
-    conv_flat = []
+        hl_conv_1 = []
+        max_pool_1 = []
+        hl_conv_2 = []
+        max_pool_2 = []
+        hl_conv_3 = []
+        max_pool_3 = []
+        conv_flat = []
 
-    for i in range(len(x_array)):
-        # define 1st convolutional layer
-        hl_conv_1.append(tf.layers.conv2d(x_array[i], kernel_size=5, filters=2, padding="valid",
-                                          activation=tf.nn.relu, name="conv_layer_1_" + str(i)))
+        for i in range(len(x_array)):
+            # define 1st convolutional layer
+            hl_conv_1.append(tf.layers.conv2d(x_array[i], kernel_size=5, filters=2, padding="valid",
+                                              activation=tf.nn.relu, name="conv_layer_1_" + str(i)))
 
-        max_pool_1.append(tf.layers.max_pooling2d(hl_conv_1[i], pool_size=2, strides=2))
+            max_pool_1.append(tf.layers.max_pooling2d(hl_conv_1[i], pool_size=2, strides=2))
 
-        # f2
-        hl_conv_2.append(tf.layers.conv2d(max_pool_1[i], kernel_size=5, filters=8, padding="valid",
-                                          activation=tf.nn.relu, name="conv_layer_2_" + str(i)))
+            # f2
+            hl_conv_2.append(tf.layers.conv2d(max_pool_1[i], kernel_size=5, filters=8, padding="valid",
+                                              activation=tf.nn.relu, name="conv_layer_2_" + str(i)))
 
-        max_pool_2.append(tf.layers.max_pooling2d(hl_conv_2[i], pool_size=2, strides=2))
+            max_pool_2.append(tf.layers.max_pooling2d(hl_conv_2[i], pool_size=2, strides=2))
 
-        # f3
-        hl_conv_3.append(tf.layers.conv2d(max_pool_2[i], kernel_size=5, filters=8, padding="valid",
-                                          activation=tf.nn.relu, name="conv_layer_3_" + str(i)))
+            # f3
+            hl_conv_3.append(tf.layers.conv2d(max_pool_2[i], kernel_size=5, filters=8, padding="valid",
+                                              activation=tf.nn.relu, name="conv_layer_3_" + str(i)))
 
-        max_pool_3.append(tf.layers.max_pooling2d(hl_conv_3[i], pool_size=2, strides=2))
+            max_pool_3.append(tf.layers.max_pooling2d(hl_conv_3[i], pool_size=2, strides=2))
 
-        # flatten tensor to connect it with the fully connected layers
-        conv_flat.append(tf.layers.flatten(max_pool_3[i]))
+            # flatten tensor to connect it with the fully connected layers
+            conv_flat.append(tf.layers.flatten(max_pool_3[i]))
 
-    commands_stack = tf.concat(conv_flat, axis=1)
+        commands_stack = tf.concat(conv_flat, axis=1)
 
-    fc = tf.layers.dense(inputs=commands_stack, units=1, name="fc_layer_out")
+        fc = tf.layers.dense(inputs=commands_stack, units=1, name="fc_layer_out")
 
-    return fc
+        return fc
 
 def model_bs_2_fs_1_d3(x):
     history = 2
@@ -742,43 +742,43 @@ def model_bs_2_fs_1_d3(x):
         # [-1: arbitrary num of images, img_height, img_width, num_channels]
         x_img = tf.reshape(x, [-1, 48 * history, 96, 3])
 
-    x_array = tf.split(x_img, num_or_size_splits=history, axis=1)
+        x_array = tf.split(x_img, num_or_size_splits=history, axis=1)
 
-    hl_conv_1 = []
-    max_pool_1 = []
-    hl_conv_2 = []
-    max_pool_2 = []
-    hl_conv_3 = []
-    max_pool_3 = []
-    conv_flat = []
+        hl_conv_1 = []
+        max_pool_1 = []
+        hl_conv_2 = []
+        max_pool_2 = []
+        hl_conv_3 = []
+        max_pool_3 = []
+        conv_flat = []
 
-    for i in range(len(x_array)):
-        # define 1st convolutional layer
-        hl_conv_1.append(tf.layers.conv2d(x_array[i], kernel_size=5, filters=2, padding="valid",
-                                          activation=tf.nn.relu, name="conv_layer_1_" + str(i)))
+        for i in range(len(x_array)):
+            # define 1st convolutional layer
+            hl_conv_1.append(tf.layers.conv2d(x_array[i], kernel_size=5, filters=2, padding="valid",
+                                              activation=tf.nn.relu, name="conv_layer_1_" + str(i)))
 
-        max_pool_1.append(tf.layers.max_pooling2d(hl_conv_1[i], pool_size=2, strides=2))
+            max_pool_1.append(tf.layers.max_pooling2d(hl_conv_1[i], pool_size=2, strides=2))
 
-        # f2
-        hl_conv_2.append(tf.layers.conv2d(max_pool_1[i], kernel_size=5, filters=8, padding="valid",
-                                     activation=tf.nn.relu, name="conv_layer_2_" + str(i)))
+            # f2
+            hl_conv_2.append(tf.layers.conv2d(max_pool_1[i], kernel_size=5, filters=8, padding="valid",
+                                         activation=tf.nn.relu, name="conv_layer_2_" + str(i)))
 
-        max_pool_2.append(tf.layers.max_pooling2d(hl_conv_2[i], pool_size=2, strides=2))
+            max_pool_2.append(tf.layers.max_pooling2d(hl_conv_2[i], pool_size=2, strides=2))
 
-        # f3
-        hl_conv_3.append(tf.layers.conv2d(max_pool_2[i], kernel_size=5, filters=8, padding="valid",
-                                     activation=tf.nn.relu, name="conv_layer_3_" + str(i)))
+            # f3
+            hl_conv_3.append(tf.layers.conv2d(max_pool_2[i], kernel_size=5, filters=8, padding="valid",
+                                         activation=tf.nn.relu, name="conv_layer_3_" + str(i)))
 
-        max_pool_3.append(tf.layers.max_pooling2d(hl_conv_3[i], pool_size=2, strides=2))
+            max_pool_3.append(tf.layers.max_pooling2d(hl_conv_3[i], pool_size=2, strides=2))
 
-        # flatten tensor to connect it with the fully connected layers
-        conv_flat.append(tf.layers.flatten(max_pool_3[i]))
+            # flatten tensor to connect it with the fully connected layers
+            conv_flat.append(tf.layers.flatten(max_pool_3[i]))
 
-    commands_stack = tf.concat(conv_flat, axis=1)
+        commands_stack = tf.concat(conv_flat, axis=1)
 
-    fc = tf.layers.dense(inputs=commands_stack, units=1, name="fc_layer_out")
+        fc = tf.layers.dense(inputs=commands_stack, units=1, name="fc_layer_out")
 
-    return fc
+        return fc
 
 def model_bs_2_fs_1_d2(x):
     history = 2
@@ -787,35 +787,35 @@ def model_bs_2_fs_1_d2(x):
         # [-1: arbitrary num of images, img_height, img_width, num_channels]
         x_img = tf.reshape(x, [-1, 48 * history, 96, 3])
 
-    x_array = tf.split(x_img, num_or_size_splits=history, axis=1)
+        x_array = tf.split(x_img, num_or_size_splits=history, axis=1)
 
-    hl_conv_1 = []
-    max_pool_1 = []
-    hl_conv_2 = []
-    max_pool_2 = []
-    conv_flat = []
+        hl_conv_1 = []
+        max_pool_1 = []
+        hl_conv_2 = []
+        max_pool_2 = []
+        conv_flat = []
 
-    for i in range(len(x_array)):
-        # define 1st convolutional layer
-        hl_conv_1.append(tf.layers.conv2d(x_array[i], kernel_size=5, filters=2, padding="valid",
-                                          activation=tf.nn.relu, name="conv_layer_1_" + str(i)))
+        for i in range(len(x_array)):
+            # define 1st convolutional layer
+            hl_conv_1.append(tf.layers.conv2d(x_array[i], kernel_size=5, filters=2, padding="valid",
+                                              activation=tf.nn.relu, name="conv_layer_1_" + str(i)))
 
-        max_pool_1.append(tf.layers.max_pooling2d(hl_conv_1[i], pool_size=2, strides=2))
+            max_pool_1.append(tf.layers.max_pooling2d(hl_conv_1[i], pool_size=2, strides=2))
 
-        # f2
-        hl_conv_2.append(tf.layers.conv2d(max_pool_1[i], kernel_size=5, filters=8, padding="valid",
-                                     activation=tf.nn.relu, name="conv_layer_2_" + str(i)))
+            # f2
+            hl_conv_2.append(tf.layers.conv2d(max_pool_1[i], kernel_size=5, filters=8, padding="valid",
+                                         activation=tf.nn.relu, name="conv_layer_2_" + str(i)))
 
-        max_pool_2.append(tf.layers.max_pooling2d(hl_conv_2[i], pool_size=2, strides=2))
+            max_pool_2.append(tf.layers.max_pooling2d(hl_conv_2[i], pool_size=2, strides=2))
 
-        # flatten tensor to connect it with the fully connected layers
-        conv_flat.append(tf.layers.flatten(max_pool_2[i]))
+            # flatten tensor to connect it with the fully connected layers
+            conv_flat.append(tf.layers.flatten(max_pool_2[i]))
 
-    commands_stack = tf.concat(conv_flat, axis=1)
+        commands_stack = tf.concat(conv_flat, axis=1)
 
-    fc = tf.layers.dense(inputs=commands_stack, units=1, name="fc_layer_out")
+        fc = tf.layers.dense(inputs=commands_stack, units=1, name="fc_layer_out")
 
-    return fc
+        return fc
 
 def model_bs_3_fs_1_d2(x):
     history = 3
@@ -824,35 +824,35 @@ def model_bs_3_fs_1_d2(x):
         # [-1: arbitrary num of images, img_height, img_width, num_channels]
         x_img = tf.reshape(x, [-1, 48 * history, 96, 3])
 
-    x_array = tf.split(x_img, num_or_size_splits=history, axis=1)
+        x_array = tf.split(x_img, num_or_size_splits=history, axis=1)
 
-    hl_conv_1 = []
-    max_pool_1 = []
-    hl_conv_2 = []
-    max_pool_2 = []
-    conv_flat = []
+        hl_conv_1 = []
+        max_pool_1 = []
+        hl_conv_2 = []
+        max_pool_2 = []
+        conv_flat = []
 
-    for i in range(len(x_array)):
-        # define 1st convolutional layer
-        hl_conv_1.append(tf.layers.conv2d(x_array[i], kernel_size=5, filters=2, padding="valid",
-                                          activation=tf.nn.relu, name="conv_layer_1_" + str(i)))
+        for i in range(len(x_array)):
+            # define 1st convolutional layer
+            hl_conv_1.append(tf.layers.conv2d(x_array[i], kernel_size=5, filters=2, padding="valid",
+                                              activation=tf.nn.relu, name="conv_layer_1_" + str(i)))
 
-        max_pool_1.append(tf.layers.max_pooling2d(hl_conv_1[i], pool_size=2, strides=2))
+            max_pool_1.append(tf.layers.max_pooling2d(hl_conv_1[i], pool_size=2, strides=2))
 
-        # f2
-        hl_conv_2.append(tf.layers.conv2d(max_pool_1[i], kernel_size=5, filters=8, padding="valid",
-                                     activation=tf.nn.relu, name="conv_layer_2_" + str(i)))
+            # f2
+            hl_conv_2.append(tf.layers.conv2d(max_pool_1[i], kernel_size=5, filters=8, padding="valid",
+                                         activation=tf.nn.relu, name="conv_layer_2_" + str(i)))
 
-        max_pool_2.append(tf.layers.max_pooling2d(hl_conv_2[i], pool_size=2, strides=2))
+            max_pool_2.append(tf.layers.max_pooling2d(hl_conv_2[i], pool_size=2, strides=2))
 
-        # flatten tensor to connect it with the fully connected layers
-        conv_flat.append(tf.layers.flatten(max_pool_2[i]))
+            # flatten tensor to connect it with the fully connected layers
+            conv_flat.append(tf.layers.flatten(max_pool_2[i]))
 
-    commands_stack = tf.concat(conv_flat, axis=1)
+        commands_stack = tf.concat(conv_flat, axis=1)
 
-    fc = tf.layers.dense(inputs=commands_stack, units=1, name="fc_layer_out")
+        fc = tf.layers.dense(inputs=commands_stack, units=1, name="fc_layer_out")
 
-    return fc
+        return fc
 
 def model1_h1_d1_n1(x):
     '''
