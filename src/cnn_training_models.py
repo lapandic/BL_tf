@@ -181,7 +181,7 @@ def model_bs_2_fs_5_d3(x):
 
     commands_stack = tf.concat(conv_flat, axis=1)
 
-    fc = tf.layers.dense(inputs=commands_stack, units=1, name="fc_layer_out")
+    fc = tf.layers.dense(inputs=commands_stack, units=5, name="fc_layer_out")
 
     return fc
 
@@ -273,7 +273,7 @@ def model_bs_3_fs_5_d3(x):
 
     commands_stack = tf.concat(conv_flat, axis=1)
 
-    fc = tf.layers.dense(inputs=commands_stack, units=1, name="fc_layer_out")
+    fc = tf.layers.dense(inputs=commands_stack, units=5, name="fc_layer_out")
 
     return fc
 
@@ -365,7 +365,7 @@ def model_bs_4_fs_5_d3(x):
 
     commands_stack = tf.concat(conv_flat, axis=1)
 
-    fc = tf.layers.dense(inputs=commands_stack, units=1, name="fc_layer_out")
+    fc = tf.layers.dense(inputs=commands_stack, units=5, name="fc_layer_out")
 
     return fc
 

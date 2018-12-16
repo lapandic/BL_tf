@@ -74,10 +74,10 @@ def main(model_name):
 
     print("The frozen graph is saved in {}.".format(output_graph))
 
-    g2 = load_graph(output_graph)
-    with g2.as_default():
-        flops = tf.profiler.profile(g2, options=tf.profiler.ProfileOptionBuilder.float_operation())
-        print('FLOP after freezing', flops.total_float_ops)
+    #g2 = load_graph(output_graph)
+    #with g2.as_default():
+    #    flops = tf.profiler.profile(g2, options=tf.profiler.ProfileOptionBuilder.float_operation())
+    #    print('FLOP after freezing', flops.total_float_ops)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
