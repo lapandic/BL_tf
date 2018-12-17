@@ -25,7 +25,7 @@ def get_model(history,steps_ahead,arch_num):
         if (history > 1 and arch_num < 3) or (history == 1 and arch_num < 6):
             model = fs_1[history-1][arch_num]
     elif steps_ahead == 5:
-        if history < 4 and arch_num < 3:
+        if history < 5 and arch_num < 3:
             model = fs_5[history-1][arch_num]
     else:
         print("Requested model not implemented!")
