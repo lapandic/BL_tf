@@ -37,7 +37,7 @@ docutils==0.12
 duckietown-serialization-ds1==1.0.3
 -e git://github.com/duckietown/duckietown-shell.git@f777da49148df5bd73661f9a0add50ec0e8bacca#egg=duckietown_shell
 -e git+https://github.com/duckietown/duckietown-slimremote.git@4708432865618b10e3a9f5ab990d9d66bbd44fb9#egg=duckietown_slimremote
-ecdsa==0.13
+ecdsa==0.13.3
 empy==3.3.2
 entrypoints==0.2.3
 enum34==1.1.6
