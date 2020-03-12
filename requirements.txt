@@ -95,7 +95,7 @@ plotly==3.4.0
 prometheus-client==0.4.2
 prompt-toolkit==1.0.15
 protobuf==3.6.1
-psutil==3.4.2
+psutil==5.6.6
 ptyprocess==0.6.0
 pyasn1==0.1.9
 pyasn1-modules==0.0.7
