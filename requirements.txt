@@ -22,7 +22,7 @@ configparser==3.5.0
 ConfTools==1.9.9
 coverage==4.5.1
 coveralls==1.5.1
-cryptography==2.3.1
+cryptography==3.2
 cycler==0.10.0
 Cython==0.29
 dask==0.20.0
