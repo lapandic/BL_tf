@@ -2,7 +2,7 @@
 BL-tensorflow==0.0.1
 asn1crypto==0.24.0
 attrs==15.2.0
-autobahn==0.10.3
+autobahn==20.12.3
 backports-abc==0.5
 backports.functools-lru-cache==1.5
 backports.shutil-get-terminal-size==1.0.0
